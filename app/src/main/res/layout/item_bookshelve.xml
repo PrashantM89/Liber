@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="2dp"
+    app:cardCornerRadius="4dp"
+    android:foreground="?android:selectableItemBackground"
+    android:id="@+id/card_view_bookshelf_item_id">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="2dp">
+    <ImageView
+        android:id="@+id/bookshelve_book_cover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/book_placeholder"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="5dp"
+        android:paddingLeft="1dp"
+        >
+        <TextView
+            android:id="@+id/bookshelve_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textSize="@dimen/book_list_title_text"
+            android:textStyle="bold"
+            android:maxLength="40"
+            />
+        <TextView
+            android:id="@+id/bookshelve_authors"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:textColor="@color/book_list_authors"
+            android:maxLength="20"/>
+        <TextView
+            android:id="@+id/bookshelve_availability_txt_id"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:text="@string/rented"
+        />
+        <TextView
+            android:id="@+id/bookshelve_duedate_txt_id"
+            android:layout_gravity="center_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="italic"
+            android:text="@string/due_date"
+            android:textColor="#ff0000"
+            />
+    </LinearLayout>
+</LinearLayout>
+</android.support.v7.widget.CardView>

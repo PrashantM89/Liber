@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: de.cketti.mailto:email-intent-builder:1.0.0@aar">
+    <ANNOTATIONS>
+      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/de.cketti.mailto/email-intent-builder/1.0.0/annotations.zip!/" />
+    </ANNOTATIONS>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/build/intermediates/exploded-aar/de.cketti.mailto/email-intent-builder/1.0.0/res" />
+      <root url="jar://$PROJECT_DIR$/build/intermediates/exploded-aar/de.cketti.mailto/email-intent-builder/1.0.0/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/de.cketti.mailto/email-intent-builder/1.0.0/40afcf6383356783c26a546fba57eec9e7992412/email-intent-builder-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

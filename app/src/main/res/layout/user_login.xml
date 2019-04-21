@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+    <ImageView
+        android:id="@+id/img_logpg_id"
+        android:layout_width="120dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="100dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/liber_launcher"/>
+
+    <EditText
+        android:id="@+id/name_edttxt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="250dp"
+        android:background="#C8C8C8"
+        android:drawableLeft="@drawable/ic_person"
+        android:ems="10"
+        android:hint="Username"
+        android:inputType="textPersonName"
+        />
+    <EditText
+        android:id="@+id/mobile_edttxt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="280dp"
+        android:background="#C8C8C8"
+        android:drawableLeft="@drawable/ic_mobile"
+        android:inputType="phone"
+        android:hint="Mobile No."
+        android:ems="10"/>
+
+    <EditText
+        android:id="@+id/email_edttxt_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="310dp"
+        android:background="#C8C8C8"
+        android:drawableLeft="@drawable/ic_mail"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+        android:ems="10"
+        />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="250dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        app:cardBackgroundColor="#000000"
+        app:cardCornerRadius="20dp"
+        android:elevation="10dp"
+        android:layout_marginTop="400dp"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <TextView
+                android:id="@+id/login_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login"
+                android:textColor="#FFFFFF"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

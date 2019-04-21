@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".BookShelfItemExpandActivity">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:background="#D6E9FF" />
+
+    <LinearLayout
+        android:id="@+id/rl_two_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        >
+        <ImageView
+            android:id="@+id/rent_book_img_cover"
+            android:layout_width="130dp"
+            android:layout_height="160dp"
+            android:scaleType="fitXY"
+            android:transitionName="bookCoverTN"
+            tools:src="@drawable/book_placeholder" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="-50dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cv_one_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="240dp"
+                android:elevation="10dp"
+                app:cardBackgroundColor="#fcfcfc"
+                app:cardCornerRadius="10dp"
+                app:cardElevation="10dp"
+                app:cardPreventCornerOverlap="false"
+                app:cardUseCompatPadding="true">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/expand_book_title_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:transitionName="bookTitleTN"
+                        android:gravity="center"
+                        style="@style/Liber.TextView.Heading"
+                        android:textAlignment="center"
+                        />
+
+                    <RatingBar
+                        android:id="@+id/ratingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleX="0.8"
+                        android:scaleY="0.8"
+                        android:layout_gravity="center"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/rating_text_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/rating_default"
+                        />
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/expand_book_availability_id"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:padding="10dp"-->
+                        <!--android:layout_marginLeft="10dp"-->
+                        <!--android:transitionName="bookAvailableTN"-->
+                         <!--/>-->
+
+                    <!--<TextView-->
+                        <!--android:id="@+id/expand_book_duedate_id"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:padding="10dp"-->
+                        <!--android:layout_marginLeft="10dp"-->
+                        <!--android:transitionName="duedateTN"-->
+                         <!--/>-->
+                    <EditText
+                        android:id="@+id/book_review_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:inputType="text|textMultiLine"
+                        android:gravity="top"
+                        android:padding="10dp"
+                        android:shadowColor="@color/inactive"
+                        android:background="@drawable/review_edittxt_border"
+                        android:layout_marginBottom="20dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="10dp"
+                        android:hint="Tell us something about this book or it's author."
+                        android:typeface="serif"
+                        />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="250dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/cv_one_login"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center"
+            android:layout_marginTop="-35dp"
+            android:text="Done"
+            android:background="@color/colorPrimary"
+            android:elevation="15dp" />
+
+
+    </LinearLayout>
+
+</RelativeLayout>

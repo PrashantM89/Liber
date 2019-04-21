@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.app.liber">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/liber_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.SelectTenureActivity" android:theme="@style/Theme.Transparent"></activity>
+        <activity android:name=".activity.NotificationActivity" />
+        <activity android:name=".WalletActivity" />
+        <activity android:name=".TransactionList" />
+        <activity android:name=".OrderCompleteActivity" />
+        <activity android:name=".OnboardingActivity" />
+        <activity
+            android:name=".SelectPaymentActivity"
+            android:label="@string/title_activity_select_payment" />
+        <activity android:name=".SplashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".BookListActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEARCH" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
+        <activity android:name=".MainLiberActivity" />
+        <activity android:name=".RentSummaryActivity" />
+        <activity android:name=".BookShelfItemExpandActivity"/>
+    </application>
+
+</manifest>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+    <!--<item-->
+        <!--android:id="@+id/location_id"-->
+        <!--android:title="Location"-->
+        <!--app:showAsAction="always"-->
+        <!--&gt;</item>-->
+    <item
+        android:id="@+id/search_id"
+        android:title="Search"
+        app:showAsAction="always|collapseActionView"
+        android:icon="@drawable/ic_search"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        ></item>
+    <item
+        android:id="@+id/notification_id"
+        android:title="Notification"
+        android:icon="@drawable/ic_notifications"
+        app:showAsAction="always">
+    </item>
+    <item
+        android:id="@+id/main_menu"
+        android:title="more_menu"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_more_vert"
+        >
+        <menu>
+            <item
+                android:id="@+id/wallet_id"
+                android:title="Wallet"
+                android:icon="@drawable/ic_wallet"
+                app:showAsAction="never"
+                >
+            </item>
+            <item
+                android:id="@+id/share_id"
+                android:title="Share"
+                android:icon="@drawable/ic_share"
+                app:showAsAction="always">
+            </item>
+            <item
+                android:id="@+id/order_sum_id"
+                android:title="Order Summary"
+                app:showAsAction="never"
+                android:icon="@drawable/ic_shopping_cart"
+                >
+            </item>
+            <item android:id="@+id/aboutus_id"
+                android:title="About Us"
+                android:icon="@drawable/ic_aboutus"
+                app:showAsAction="never"
+                >
+            </item>
+            <item android:id="@+id/contactus_id"
+                android:title="Contact Us"
+                android:icon="@drawable/ic_contactus"
+                app:showAsAction="never">
+            </item>
+            <item
+                android:id="@+id/logout_id"
+                android:title="Logout"
+                android:icon="@drawable/ic_logout"
+                app:showAsAction="never"
+                >
+            </item>
+        </menu>
+    </item>
+</menu>

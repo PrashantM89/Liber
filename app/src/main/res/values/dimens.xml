@@ -1,0 +1,24 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <!--Book List-->
+    <dimen name="search_field_left_margin">4dp</dimen>
+    <dimen name="search_field_right_margin">4dp</dimen>
+    <!--Book List-->
+    <dimen name="book_list_left_margin">16dp</dimen>
+    <dimen name="book_list_right_margin">16dp</dimen>
+    <dimen name="book_list_top_margin">16dp</dimen>
+    <dimen name="book_list_bottom_margin">16dp</dimen>
+    <dimen name="book_list_title_text">16sp</dimen>
+    <dimen name="book_content_left_margin">8dp</dimen>
+    <dimen name="book_content_right_margin">8dp</dimen>
+    <dimen name="book_content_bottom_margin">16dp</dimen>
+    <dimen name="book_content_top_margin">16dp</dimen>
+    <!--Max Results Spinner-->
+    <dimen name="spinner_top_margin">4dp</dimen>
+    <dimen name="spinner_text">12sp</dimen>
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_micro">12sp</dimen>
+    <dimen name="thumbnail_length_onlinefeedview">120dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+</resources>
