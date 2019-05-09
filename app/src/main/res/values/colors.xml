@@ -18,4 +18,5 @@
     <color name="highlight">#FFFF00</color>
     <color name="imp">#FF0000</color>
     <color name="inactive">#D8D8D8</color>
+    <color name="deepSkyBlue">#00BFFF</color>
 </resources>
