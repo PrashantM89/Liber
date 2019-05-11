@@ -1,13 +1,20 @@
 package org.app.liber;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,11 +23,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.app.liber.activity.NotificationActivity;
 import org.app.liber.adapter.ViewPagerAdapter;
 import org.app.liber.helper.DatabaseHelper;
+import org.app.liber.helper.LocationHelper;
 
 import de.cketti.mailto.EmailIntentBuilder;
 
@@ -31,6 +40,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private ViewPagerAdapter adapter;
     private Toolbar toolbar;
     private AlertDialog.Builder locationAlert;
+    private TextView locationTxt;
     //UserSessionManager session;
     LinearLayout linearLayout;
     DatabaseHelper databaseHelper;
@@ -44,31 +54,44 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_activity);
         linearLayout = (LinearLayout)findViewById(R.id.activity_main);
-//check for user permission to access his location
-//        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED){
-//            if(ActivityCompat.shouldShowRequestPermissionRationale(MainLiberActivity.this,Manifest.permission.ACCESS_COARSE_LOCATION)){
-//                ActivityCompat.requestPermissions(MainLiberActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
-//            }else {
-//                ActivityCompat.requestPermissions(MainLiberActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
-//            }
-//        }else{
-//            LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-//            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//            LocationHelper locationHelper = new LocationHelper(getApplicationContext());
-//            try{
-//                city = locationHelper.getLocation(location.getLatitude(),location.getLongitude());
-//                Toast.makeText(getApplicationContext(),"Location Found: "+city,Toast.LENGTH_LONG).show();
-//            }catch (Exception e){
-//                //Toast.makeText(getApplicationContext(),"Location Not Found!",Toast.LENGTH_LONG).show();
-//            }
-//        }
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor sharedPreferencesEditor =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+
+        locationTxt = (TextView) findViewById(R.id.toolbar_location_id);
+        //check for user permission to access his location
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(MainLiberActivity.this,Manifest.permission.ACCESS_COARSE_LOCATION)){
+                ActivityCompat.requestPermissions(MainLiberActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
+            }else {
+                ActivityCompat.requestPermissions(MainLiberActivity.this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},1);
+            }
+        }else{
+            LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            LocationHelper locationHelper = new LocationHelper(getApplicationContext());
+            try{
+                city = locationHelper.getLocation(location.getLatitude(),location.getLongitude());
+                locationTxt.setText(city);
+                sharedPreferencesEditor.putString("USER_LOCATION",city);
+                sharedPreferencesEditor.apply();
+                Toast.makeText(getApplicationContext(),"Location Found: "+city,Toast.LENGTH_LONG).show();
+            }catch (Exception e){
+                Toast.makeText(getApplicationContext(),"Location Not Found!",Toast.LENGTH_LONG).show();
+            }
+        }
 
 //        i = getIntent();
 //        city = i.getStringExtra("location");
 
+        String location =pref.getString("USER_LOCATION","LOCATION_NOT_FOUND");
+
+        if(location.isEmpty() || location.equals("LOCATION_NOT_FOUND") || locationTxt.getText().equals("")){
+            Toast.makeText(getApplicationContext(),"Please select Location.",Toast.LENGTH_LONG).show();
+            locationTxt.setText("Select Location");
+        }
 
 
-        pref = PreferenceManager.getDefaultSharedPreferences(this);
         if (!pref.getBoolean(
                 "COMPLETED_ONBOARDING_PREF_NAME", false)) {
             Intent i = new Intent(this, OnboardingActivity.class);
@@ -76,8 +99,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
             startActivity(i);
             this.finish();
         }
-        SharedPreferences.Editor sharedPreferencesEditor =
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+
         sharedPreferencesEditor.putBoolean(
                 "COMPLETED_ONBOARDING_PREF_NAME", true);
         sharedPreferencesEditor.apply();
@@ -116,8 +138,8 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         tabLayout.setupWithViewPager(viewPager);
 
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.app_name);
-
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        //getSupportActionBar().setTitle(R.string.app_name);
     }
 
     @Override

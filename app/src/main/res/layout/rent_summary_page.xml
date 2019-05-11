@@ -24,6 +24,7 @@
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="none"
         android:padding="5dp">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -195,7 +196,7 @@
                     android:layout_marginRight="16dp"
                     android:layout_marginTop="8dp"
                     android:text="More by same author"
-                    style="@style/Liber.TextView.Heading"
+                    style="@style/Liber.TextView.Heading_Small"
                     android:textColor="?android:attr/textColorPrimary"
                     />
             </LinearLayout>
@@ -206,6 +207,7 @@
                 android:layout_below="@+id/more_author_text_id"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:scrollbars="none"
                 >
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -219,6 +221,27 @@
                 </android.support.v7.widget.RecyclerView>
                 </LinearLayout>
             </HorizontalScrollView>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_below="@+id/horizontalScrollView">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Reader Review"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="8dp"
+                    style="@style/Liber.TextView.Heading_Small"
+                    />
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/reader_review_recyclerview"
+                    >
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
         </RelativeLayout>
     </ScrollView>
 </LinearLayout>
