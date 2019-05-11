@@ -1,8 +1,10 @@
 package org.app.liber;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -20,6 +22,8 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
 
 import org.app.liber.activity.SelectTenureActivity;
@@ -32,20 +36,21 @@ import java.util.ArrayList;
 @SuppressWarnings("unchecked")
 public class RentSummaryActivity extends AppCompatActivity {
 
-    ImageView rentBookCover;
-    TextView rentBookTitle;
-    TextView rentBookAuthor;
-    TextView rentBookDesc;
-    TextView rentBookGenre;
-    TextView rentBookRating;
-    Button orderSummaryButton;
-    MoreByAuthorAdapter recyclerViewAdapter;
-    ReaderReviewAdapter readerReviewAdapter;
+    private ImageView rentBookCover;
+    private TextView rentBookTitle;
+    private TextView rentBookAuthor;
+    private TextView rentBookDesc;
+    private TextView rentBookGenre;
+    private TextView rentBookRating;
+    private Button orderSummaryButton;
+    private MoreByAuthorAdapter recyclerViewAdapter;
+    private ReaderReviewAdapter readerReviewAdapter;
     private RecyclerView recyclerView;
     private RecyclerView reviewRecyclerView;
-    ArrayList<LibraryDataModel> lstOfMoreBooksByThisAuthor;
-    ArrayList<BookReviewModel> lstOfReaderReviews;
-    DatabaseHelper db;
+    private ArrayList<LibraryDataModel> lstOfMoreBooksByThisAuthor;
+    private ArrayList<BookReviewModel> lstOfReaderReviews;
+    private DatabaseHelper db;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,7 +79,6 @@ public class RentSummaryActivity extends AppCompatActivity {
         rentBookRating = (TextView)findViewById(R.id.rating_id);
         orderSummaryButton = (Button)findViewById(R.id.butSubscribe);
         rentBookDesc.setMovementMethod(new ScrollingMovementMethod());
-
 
         Intent i = getIntent();
         final LibraryDataModel l = (LibraryDataModel)i.getSerializableExtra("LibraryBookDetail");

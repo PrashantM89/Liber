@@ -47,6 +47,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private boolean doubleBackToExitPressedOnce = false;
     private LocationHelper locationHelper;
     private BroadcastReceiver broadcastReceiver;
+    private SharedPreferences.Editor sharedPreferencesEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +55,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         setContentView(R.layout.drawer_activity);
         linearLayout = (LinearLayout)findViewById(R.id.activity_main);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor sharedPreferencesEditor =
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+        sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
         locationHelper = new LocationHelper(getApplicationContext());
 
@@ -132,6 +132,8 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                     if(longitude != null && latitude != null){
                         city = locationHelper.getLocation(Double.valueOf(latitude), Double.valueOf(longitude));
                         locationTxt.setText(city);
+                        sharedPreferencesEditor.putString("user_location",city.trim().toString());
+                        sharedPreferencesEditor.apply();
                         disableLocation();
                     }
                 }

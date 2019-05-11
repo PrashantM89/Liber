@@ -9,8 +9,19 @@
     <android.support.v4.view.ViewPager
         android:id="@+id/slideViePagerId"
         android:layout_width="match_parent"
-        android:layout_height="688dp"></android.support.v4.view.ViewPager>
+        android:layout_height="630dp"></android.support.v4.view.ViewPager>
 
+    <LinearLayout
+        android:id="@+id/dotsLayoutId"
+        android:layout_above="@+id/got_it_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="20dp"
+        android:layout_centerInParent="true"
+        >
+
+    </LinearLayout>
 
         <Button
             android:layout_alignParentBottom="true"
@@ -18,6 +29,7 @@
             android:layout_width="250dp"
             android:layout_height="40dp"
             android:text="Login"
+            android:textAllCaps="false"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:layout_centerInParent="true"
