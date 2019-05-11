@@ -32,12 +32,11 @@
             android:layout_height="45dp"
             android:orientation="horizontal"
             android:gravity="left|center"
-            android:background="@color/colorPrimary"
             >
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Select rental days "
+                android:text="Rent this book for "
                 android:layout_marginLeft="12dp"
                 style="@style/Liber.TextView.Heading"
                 android:textSize="20dp"
@@ -106,11 +105,10 @@
                     android:id="@+id/submit_tenure_id"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/white"
-                    android:background="@drawable/selector"
+                    android:textColor="@color/black"
                     android:textStyle="bold"
+                    android:background="@android:color/transparent"
                     android:text="Done"
-
                     android:layout_marginRight="5dp"
                     />
             </LinearLayout>

@@ -25,13 +25,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        app:srcCompat="@android:drawable/ic_input_add"
+        app:srcCompat="@drawable/ic_add"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="28dp"
         app:elevation="6dp"
         app:borderWidth="0dp"
-        android:backgroundTint="#E7E000"
+        android:backgroundTint="@color/colorPrimary"
         app:pressedTranslationZ="12dp"
         />
 </RelativeLayout>

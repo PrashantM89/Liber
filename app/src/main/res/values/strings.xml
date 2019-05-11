@@ -10,6 +10,7 @@
     <string name="empty_results_icon_description">A crying face</string>
     <string name="rent">Rent</string>
     <string name="available">Available</string>
+    <string name="unknown">Finding Location..</string>
     <string name="rented">Rented</string>
     <string name="due_date">Due on: 15/04/19</string>
     <string name="tag_line">Share the joy of reading</string>
