@@ -48,6 +48,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private TextView walletblncAmntTxt;
     private TextView returnDateTxt;
     private TextView dateExtFeesTxt;
+    private TextView gstTxt;
     private int bookAmnt = 70;
     private int walletAmnt = 0;
     private LinearLayout linearLayout;
@@ -57,6 +58,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private Calendar calendar;
     private SharedPreferences pref;
     private String userLocation;
+    private double gstAmount = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         totalAmntTxt = (TextView)findViewById(R.id.total_payable_amount_id);
         walletblncAmntTxt = (TextView)findViewById(R.id.wallet_blnc_amnt_id);
         dateExtFeesTxt = (TextView)findViewById(R.id.date_ext_fees_id);
+        gstTxt = (TextView)findViewById(R.id.gst_amount_id);
 
         userLocation = pref.getString("user_location","unknown");
         Toast.makeText(getApplicationContext(),"Your location is "+userLocation,Toast.LENGTH_SHORT).show();
@@ -246,22 +249,37 @@ public class SelectPaymentActivity extends AppCompatActivity {
     }
 
     public String finalAmount(){
-
+        String finalAmount;
         if(walletAmnt>=0 && walletAmnt<=bookAmnt){
-            return  String.valueOf(bookAmnt - walletAmnt);
+            finalAmount = String.valueOf(bookAmnt - walletAmnt);
+            gstAmount = calculateTotalGST(finalAmount);
+            return  String.valueOf(Double.parseDouble(finalAmount)+gstAmount);
         }else if(walletAmnt>bookAmnt){
             walletAmntTxt.setText(String.valueOf(bookAmnt));
-            return String.valueOf(0);
+            finalAmount = String.valueOf(0);
+            return finalAmount;
         } else{
-            return String.valueOf(bookAmnt);
+            finalAmount = String.valueOf(bookAmnt);
+            gstAmount = calculateTotalGST(finalAmount);
+            return  String.valueOf(Double.parseDouble(finalAmount)+gstAmount);
         }
+    }
+
+    private double calculateTotalGST(String beforeGST) {
+        double gstPerc = 0.05;
+        double b4GST = Double.valueOf(beforeGST);
+        double afterGST = gstPerc * b4GST;
+
+        gstTxt.setText(String.valueOf(afterGST));
+        return afterGST;
     }
 
     public String finalAmountRvrs(){
         int walletAmnt = 0;
         //int bookAmnt = 70;
-
-        return String.valueOf(bookAmnt);
+       gstAmount = calculateTotalGST(String.valueOf(bookAmnt));
+       Double doubleBookAmnt = Double.valueOf(bookAmnt);
+        return String.valueOf(doubleBookAmnt+gstAmount);
     }
 
     @Override

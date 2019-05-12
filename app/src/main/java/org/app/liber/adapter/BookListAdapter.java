@@ -89,7 +89,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
 
     private void addPointsInWallet() {
         txn = new WalletTxn(databaseHelper);
-        WalletModel model = new WalletModel(1,"7338239977",new Date().toString());
+        WalletModel model = new WalletModel(3,"7338239977",new Date().toString());
         txn.addToWallet(model);
     }
 }

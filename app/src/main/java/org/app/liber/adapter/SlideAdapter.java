@@ -1,4 +1,4 @@
-package org.app.liber;
+package org.app.liber.adapter;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.app.liber.R;
 
 public class SlideAdapter extends PagerAdapter {
 
