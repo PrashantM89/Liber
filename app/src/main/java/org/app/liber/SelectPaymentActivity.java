@@ -191,7 +191,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (((CheckBox) view).isChecked()) {
                     totalAmntTxt.setText(finalAmount());
-                    walletAmntTxt.setText(String.valueOf(bookAmnt-Integer.parseInt(totalAmntTxt.getText().toString())));
+                    walletAmntTxt.setText(String.valueOf(Double.valueOf(bookAmnt)-Double.parseDouble(totalAmntTxt.getText().toString())));
                 }else{
                     totalAmntTxt.setText(finalAmountRvrs());
                     walletAmntTxt.setText("0");

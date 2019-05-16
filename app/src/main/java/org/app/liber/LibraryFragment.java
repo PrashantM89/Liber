@@ -1,6 +1,8 @@
 package org.app.liber;
 
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.content.Context;
@@ -15,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,24 +29,26 @@ import com.google.firebase.database.ValueEventListener;
 import org.app.liber.adapter.RecyclerViewAdapter;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.model.LibraryDataModel;
-
+import org.app.liber.pojo.BookshelfPojo;
 import java.util.ArrayList;
 import java.util.List;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import android.app.ProgressDialog;
 
 public class LibraryFragment extends Fragment {
 
     private View v;
     private RecyclerView recyclerView;
-    private ArrayList<LibraryDataModel> lstLibraryBooks;
+    //private ArrayList<LibraryDataModel> lstLibraryBooks;
+    private ArrayList<BookshelfPojo> lstLibraryBooks;
     private DatabaseHelper databaseHelper;
+    private ProgressDialog progressDialog;
     private SearchView searchView;
     private RecyclerViewAdapter recyclerViewAdapter;
 
-
-    public LibraryFragment() {
-
-    }
-
+    public LibraryFragment() { }
 
     @Override
     public Context getContext() {
@@ -55,26 +60,44 @@ public class LibraryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.library_fragment,container,false);
         recyclerView = (RecyclerView)v.findViewById(R.id.library_recyclerview);
-        recyclerViewAdapter = new RecyclerViewAdapter(getContext(),lstLibraryBooks);
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
-        recyclerView.setAdapter(recyclerViewAdapter);
         return v;
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         databaseHelper = new DatabaseHelper(getContext());
-        Cursor result = databaseHelper.getLibraryData();
-
+        //Cursor result = databaseHelper.getLibraryData();
         lstLibraryBooks = new ArrayList<>();
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setMessage(getContext().getString(R.string.processing_label));
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        progressDialog.show();
 
-        while (result.moveToNext()){
-            LibraryDataModel b = new LibraryDataModel(result.getString(result.getColumnIndex(result.getColumnName(0).toString())),result.getString(result.getColumnIndex(result.getColumnName(1).toString())),result.getString(result.getColumnIndex(result.getColumnName(2).toString())),result.getString(result.getColumnIndex(result.getColumnName(3).toString())),result.getString(result.getColumnIndex(result.getColumnName(4).toString())),result.getString(result.getColumnIndex(result.getColumnName(5).toString())));
-            lstLibraryBooks.add(b);
-        }
+//        while (result.moveToNext()){
+//            LibraryDataModel b = new LibraryDataModel(result.getString(result.getColumnIndex(result.getColumnName(0).toString())),result.getString(result.getColumnIndex(result.getColumnName(1).toString())),result.getString(result.getColumnIndex(result.getColumnName(2).toString())),result.getString(result.getColumnIndex(result.getColumnName(3).toString())),result.getString(result.getColumnIndex(result.getColumnName(4).toString())),result.getString(result.getColumnIndex(result.getColumnName(5).toString())));
+//            lstLibraryBooks.add(b);
+//        }
+
+        LiberEndpointInterface service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
+        Call<ArrayList<BookshelfPojo>> call = service.getBooks();
+
+        call.enqueue(new Callback<ArrayList<BookshelfPojo>>() {
+            @Override
+            public void onResponse(Call<ArrayList<BookshelfPojo>> call, Response<ArrayList<BookshelfPojo>> response) {
+                recyclerViewAdapter = new RecyclerViewAdapter(getContext(),lstLibraryBooks = response.body());
+                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
+                recyclerView.setAdapter(recyclerViewAdapter);
+                progressDialog.dismiss();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<BookshelfPojo>> call, Throwable t) {
+                System.out.println("---------------------- "+t.getMessage());
+            }
+        });
 
     }
 
@@ -97,9 +120,9 @@ public class LibraryFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                final ArrayList<LibraryDataModel> lst = filterLibraryBooks(lstLibraryBooks,newText);
-               recyclerViewAdapter.setLstLibraryBooks(lst);
-                recyclerViewAdapter.notifyDataSetChanged();
+                //final ArrayList<LibraryDataModel> lst = filterLibraryBooks(lstLibraryBooks,newText);
+               //recyclerViewAdapter.setLstLibraryBooks(lst);
+               // recyclerViewAdapter.notifyDataSetChanged();
                 return true;
             }
         });
@@ -123,5 +146,4 @@ public class LibraryFragment extends Fragment {
         recyclerViewAdapter.animateTo(filteredList);
         return filteredList;
     }
-
 }

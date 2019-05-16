@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import org.app.liber.R;
 import org.app.liber.RentSummaryActivity;
 import org.app.liber.model.LibraryDataModel;
+import org.app.liber.pojo.BookshelfPojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +24,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     Context context;
     ArrayList<LibraryDataModel> lstLibraryBooks;
+    ArrayList<BookshelfPojo> lstLibraryBooks2;
 
-    public void setLstLibraryBooks(ArrayList<LibraryDataModel> lstLibraryBooks) {
-        this.lstLibraryBooks = lstLibraryBooks;
+    public void setLstLibraryBooks(ArrayList<BookshelfPojo> lstLibraryBooks2) {
+        this.lstLibraryBooks2 = lstLibraryBooks2;
     }
 
-    public RecyclerViewAdapter(Context context, ArrayList<LibraryDataModel> lstLibraryBooks) {
+    public RecyclerViewAdapter(Context context, ArrayList<BookshelfPojo> lstLibraryBooks2) {
         this.context = context;
-        this.lstLibraryBooks = lstLibraryBooks;
+        this.lstLibraryBooks2 = lstLibraryBooks2;
     }
 
     @Override
@@ -45,14 +47,14 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(MyViewHolder myViewHolder, int i) {
-        myViewHolder.tvBookName.setText(lstLibraryBooks.get(i).getBookTitle());
+        myViewHolder.tvBookName.setText(lstLibraryBooks2.get(i).getTitle());
         //myViewHolder.tvAuthor.setText(lstLibraryBooks.get(i).getAuthor());
-        Picasso.with(context).load(lstLibraryBooks.get(i).getSmallThumbnailLink()).into(myViewHolder.ivCover);
+        Picasso.with(context).load(lstLibraryBooks2.get(i).getCoverImgUrl()).into(myViewHolder.ivCover);
     }
 
     @Override
     public int getItemCount() {
-        return lstLibraryBooks.size();
+        return lstLibraryBooks2.size();
     }
 
     public  class MyViewHolder extends RecyclerView.ViewHolder{
