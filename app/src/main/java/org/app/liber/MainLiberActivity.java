@@ -29,7 +29,6 @@ import android.widget.Toast;
 import org.app.liber.Service.LocationService;
 import org.app.liber.activity.NotificationActivity;
 import org.app.liber.adapter.ViewPagerAdapter;
-import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.helper.LocationHelper;
 import de.cketti.mailto.EmailIntentBuilder;
 
@@ -47,15 +46,15 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private boolean doubleBackToExitPressedOnce = false;
     private LocationHelper locationHelper;
     private BroadcastReceiver broadcastReceiver;
-    private SharedPreferences.Editor sharedPreferencesEditor;
-
+    SharedPreferences.Editor sharedPreferencesEditor;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_activity);
         linearLayout = (LinearLayout)findViewById(R.id.activity_main);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+        sharedPreferencesEditor =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
         locationHelper = new LocationHelper(getApplicationContext());
 
@@ -131,8 +130,9 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                     String latitude = loc.substring(loc.indexOf(" "),loc.length());
                     if(longitude != null && latitude != null){
                         city = locationHelper.getLocation(Double.valueOf(latitude), Double.valueOf(longitude));
+                        Toast.makeText(getApplicationContext(), city, Toast.LENGTH_SHORT).show();
                         locationTxt.setText(city);
-                        sharedPreferencesEditor.putString("user_location",city.trim().toString());
+                        sharedPreferencesEditor.putString("user_location",city.trim());
                         sharedPreferencesEditor.apply();
                         disableLocation();
                     }

@@ -1,9 +1,5 @@
 package org.app.liber;
 
-import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -18,13 +14,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.app.liber.adapter.RecyclerViewAdapter;
 import org.app.liber.helper.DatabaseHelper;
@@ -41,7 +30,6 @@ public class LibraryFragment extends Fragment {
 
     private View v;
     private RecyclerView recyclerView;
-    //private ArrayList<LibraryDataModel> lstLibraryBooks;
     private ArrayList<BookshelfPojo> lstLibraryBooks;
     private DatabaseHelper databaseHelper;
     private ProgressDialog progressDialog;
@@ -68,18 +56,12 @@ public class LibraryFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         databaseHelper = new DatabaseHelper(getContext());
-        //Cursor result = databaseHelper.getLibraryData();
         lstLibraryBooks = new ArrayList<>();
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getContext().getString(R.string.processing_label));
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
         progressDialog.show();
-
-//        while (result.moveToNext()){
-//            LibraryDataModel b = new LibraryDataModel(result.getString(result.getColumnIndex(result.getColumnName(0).toString())),result.getString(result.getColumnIndex(result.getColumnName(1).toString())),result.getString(result.getColumnIndex(result.getColumnName(2).toString())),result.getString(result.getColumnIndex(result.getColumnName(3).toString())),result.getString(result.getColumnIndex(result.getColumnName(4).toString())),result.getString(result.getColumnIndex(result.getColumnName(5).toString())));
-//            lstLibraryBooks.add(b);
-//        }
 
         LiberEndpointInterface service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
         Call<ArrayList<BookshelfPojo>> call = service.getBooks();
@@ -96,6 +78,7 @@ public class LibraryFragment extends Fragment {
             @Override
             public void onFailure(Call<ArrayList<BookshelfPojo>> call, Throwable t) {
                 System.out.println("---------------------- "+t.getMessage());
+                progressDialog.dismiss();
             }
         });
 
@@ -103,7 +86,6 @@ public class LibraryFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        //inflater.inflate(R.menu.menu_main, menu);
         super.onCreateOptionsMenu(menu, inflater);
         final MenuItem searchItem = menu.findItem(R.id.search_id);
         searchView = (SearchView)searchItem.getActionView();
@@ -120,9 +102,6 @@ public class LibraryFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                //final ArrayList<LibraryDataModel> lst = filterLibraryBooks(lstLibraryBooks,newText);
-               //recyclerViewAdapter.setLstLibraryBooks(lst);
-               // recyclerViewAdapter.notifyDataSetChanged();
                 return true;
             }
         });
