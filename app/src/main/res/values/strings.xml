@@ -35,7 +35,7 @@
     <string name="month_2">Two months (+₹15)</string>
     <string name="wallet_subtitle">Get your books to work. Upload them on Liber and earn ₹3 on every book upload and more on rental.</string>
     <string name="order_subtitle">Book will be delivered to you by tomorrow. Our executive will contact you soon for delivery. Check order summary to track your order.</string>
-    <string name="processing_label">Processing</string>
+    <string name="processing_label">Loading...</string>
     <string name="Open">Open</string>
     <string name="Close">Close</string>
     <string name="need_help">Need Help? Contact us.</string>
@@ -49,4 +49,12 @@
     <string name="rating_3">Ok</string>
     <string name="rating_4">Good</string>
     <string name="rating_5">Awesome! A must read</string>
+    <string name="reader_avatar_desc">profile picture</string>
+    <string name="me_profile_photo">Profile Photo</string>
+    <string name="my_profile">My Profile</string>
+    <string name="change_photo">Change photo</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="public_display_name">Public display name</string>
+    <string name="public_display_name_hint">Display name will default to your username if it is not set</string>
 </resources>

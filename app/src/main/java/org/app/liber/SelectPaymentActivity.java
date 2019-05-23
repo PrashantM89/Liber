@@ -19,8 +19,8 @@ import android.widget.Toast;
 
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.model.Book;
-import org.app.liber.model.LibraryDataModel;
 import org.app.liber.model.UserTransactionModel;
+import org.app.liber.pojo.BookshelfPojo;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -41,7 +41,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
     //private static final String GOOGLE_TEZ_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
     private Intent j;
     private DatabaseHelper databaseHelper;
-    private LibraryDataModel l;
+    private BookshelfPojo l;
     private CheckBox walletChckBox;
     private TextView totalAmntTxt;
     private TextView walletAmntTxt;
@@ -110,7 +110,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
 
         Intent i = getIntent();
 
-        l = (LibraryDataModel)i.getSerializableExtra("order_book2");
+        l = (BookshelfPojo)i.getSerializableExtra("order_book2");
         tenureSelected = i.getStringExtra("tenure_selected");
 
         if(tenureSelected.equals("1")){
@@ -133,7 +133,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         }
         //Picasso.with(getApplicationContext()).load(l.getSmallThumbnailLink()).resize(100,150).into(orderImg);
 
-        orderTitle.setText(l.getBookTitle());
+        orderTitle.setText(l.getTitle());
         walletblncAmntTxt.setText(String.valueOf(walletAmnt));
         walletAmntTxt.setText("0");
         totalAmntTxt.setText(finalAmountRvrs());
@@ -156,7 +156,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setTxDate(formattedDate);
                     usrTx.setDeliveryStatus("Pending");
                     databaseHelper.addUsrTxData(usrTx);
-                    databaseHelper.addData(new Book(l.getBookTitle().toString(),l.getAuthor(),l.getSmallThumbnailLink(),l.getDescription(),l.getGenre(),""));
+                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
                     startActivity(j);
             }
         });
@@ -241,7 +241,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setDeliveryStatus("Pending");
 
                     databaseHelper.addUsrTxData(usrTx);
-                    databaseHelper.addData(new Book(l.getBookTitle().toString(),l.getAuthor(),l.getSmallThumbnailLink(),l.getDescription(),l.getGenre(),""));
+                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
                     startActivity(j);
                 }
             }

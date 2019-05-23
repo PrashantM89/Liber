@@ -3,7 +3,9 @@ package org.app.liber.pojo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class BookshelfPojo {
+import java.io.Serializable;
+
+public class BookshelfPojo implements Serializable {
 
     @SerializedName("title")
     @Expose
@@ -23,6 +25,9 @@ public class BookshelfPojo {
     @SerializedName("rating")
     @Expose
     private String rating;
+    @SerializedName("user")
+    @Expose
+    private String u_id;
 
     public String getTitle() {
         return title;
@@ -72,4 +77,7 @@ public class BookshelfPojo {
         this.rating = rating;
     }
 
+    public String getU_id() { return u_id; }
+
+    public void setU_id(String u_id) { this.u_id = u_id; }
 }

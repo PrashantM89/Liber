@@ -2,6 +2,7 @@ package org.app.liber;
 
 import org.app.liber.pojo.BookshelfPojo;
 import org.app.liber.pojo.UserPojo;
+import org.app.liber.pojo.UserReview;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,4 +25,13 @@ public interface LiberEndpointInterface {
 
     @POST("bookshelf/upload")
     Call<ResponseBody> insertBookInBookshelf(@Body BookshelfPojo bookshelfPojo, @Query("u_id")String u_id);
+
+    //Reviews
+    @GET("review/reviews")
+    Call<ArrayList<UserReview>> getUserReviews();
+
+    @POST("review/uploadReview")
+    Call<ResponseBody> insertUserReviewOnABook(@Body UserReview userReview, @Query("uid")String u_id);
+
+
 }

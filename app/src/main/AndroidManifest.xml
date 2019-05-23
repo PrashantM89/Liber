@@ -6,13 +6,18 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/liber_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.SelectTenureActivity" android:theme="@style/Theme.Transparent"></activity>
+        <activity android:name=".activity.MyProfileActivity"></activity>
+        <activity android:name=".activity.MeActivity" />
+        <activity
+            android:name=".activity.SelectTenureActivity"
+            android:theme="@style/Theme.Transparent" />
         <activity android:name=".activity.NotificationActivity" />
         <activity android:name=".WalletActivity" />
         <activity android:name=".TransactionList" />
@@ -24,6 +29,7 @@
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -41,7 +47,9 @@
         </activity>
         <activity android:name=".MainLiberActivity" />
         <activity android:name=".RentSummaryActivity" />
-        <activity android:name=".BookShelfItemExpandActivity"/>
-        <service android:name=".Service.LocationService"/>
+        <activity android:name=".BookShelfItemExpandActivity" />
+
+        <service android:name=".Service.LocationService" />
     </application>
+
 </manifest>

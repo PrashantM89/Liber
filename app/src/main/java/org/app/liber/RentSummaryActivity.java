@@ -30,8 +30,12 @@ import org.app.liber.activity.SelectTenureActivity;
 import org.app.liber.adapter.MoreByAuthorAdapter;
 import org.app.liber.adapter.ReaderReviewAdapter;
 import org.app.liber.model.BookReviewModel;
-import org.app.liber.model.LibraryDataModel;
+import org.app.liber.pojo.BookshelfPojo;
+import org.app.liber.pojo.UserReview;
 import java.util.ArrayList;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @SuppressWarnings("unchecked")
 public class RentSummaryActivity extends AppCompatActivity {
@@ -47,9 +51,11 @@ public class RentSummaryActivity extends AppCompatActivity {
     private ReaderReviewAdapter readerReviewAdapter;
     private RecyclerView recyclerView;
     private RecyclerView reviewRecyclerView;
-    private ArrayList<LibraryDataModel> lstOfMoreBooksByThisAuthor;
+    private ArrayList<BookshelfPojo> lstOfMoreBooksByThisAuthor;
     private ArrayList<BookReviewModel> lstOfReaderReviews;
     private DatabaseHelper db;
+    private LiberEndpointInterface service;
+    private ArrayList<UserReview> lst;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,19 +85,21 @@ public class RentSummaryActivity extends AppCompatActivity {
         rentBookRating = (TextView)findViewById(R.id.rating_id);
         orderSummaryButton = (Button)findViewById(R.id.butSubscribe);
         rentBookDesc.setMovementMethod(new ScrollingMovementMethod());
+        service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
 
         Intent i = getIntent();
-        final LibraryDataModel l = (LibraryDataModel)i.getSerializableExtra("LibraryBookDetail");
-        final ArrayList<LibraryDataModel> ll = (ArrayList<LibraryDataModel>) i.getSerializableExtra("LibraryObject");
-        for(LibraryDataModel ldm:ll){
-            if(ldm.getAuthor().contains(l.getAuthor()) && !ldm.getBookTitle().equals(l.getBookTitle())) {
+        final BookshelfPojo l = (BookshelfPojo)i.getSerializableExtra("LibraryBookDetail");
+        final ArrayList<BookshelfPojo> ll = (ArrayList<BookshelfPojo>) i.getSerializableExtra("LibraryObject");
+        for(BookshelfPojo ldm:ll){
+            if(ldm.getAuthor().contains(l.getAuthor()) && !ldm.getTitle().equals(l.getTitle())) {
                 lstOfMoreBooksByThisAuthor.add(ldm);
             }
         }
 
+
         recyclerViewAdapter = new MoreByAuthorAdapter(getApplicationContext(),lstOfMoreBooksByThisAuthor);
 
-        loadReviews(l.getBookTitle());
+        loadReviews(l.getTitle());
 
         GridLayoutManager glm = new GridLayoutManager(this,1);
         glm.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -99,12 +107,12 @@ public class RentSummaryActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerViewAdapter);
 
 
-        rentBookTitle.setText(l.getBookTitle());
+        rentBookTitle.setText(l.getTitle());
         rentBookAuthor.setText(l.getAuthor());
         rentBookDesc.setText(l.getDescription());
         rentBookGenre.setText(l.getGenre());
-        rentBookRating.setText(l.getAvgRating());
-        Picasso.with(getApplicationContext()).load(l.getSmallThumbnailLink()).resize(150,200).into(rentBookCover);
+        rentBookRating.setText(l.getRating());
+        Picasso.with(getApplicationContext()).load(l.getCoverImgUrl()).resize(150,200).into(rentBookCover);
         makeTextViewResizable(rentBookDesc, 3, "Read More", true);
         orderSummaryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,23 +210,40 @@ public class RentSummaryActivity extends AppCompatActivity {
 
     }
 
-    private void loadReviews(String bookName){
-        db = new DatabaseHelper(getApplicationContext());
-        ArrayList<BookReviewModel> lst = new ArrayList<>();
-        BookReviewModel bookReviewModel;
-        Cursor result = db.getReview();
-        while (result.moveToNext()){
-            bookReviewModel = new BookReviewModel(result.getString(result.getColumnIndex(result.getColumnName(2).toString())),result.getString(result.getColumnIndex(result.getColumnName(3).toString())),result.getString(result.getColumnIndex(result.getColumnName(1).toString())),result.getString(result.getColumnIndex(result.getColumnName(0).toString())));
-            if(bookReviewModel.getBookName().trim().equals(bookName.trim())){
-                lst.add(bookReviewModel);
-            }else{
-                lst.add(bookReviewModel);
+    private void loadReviews(final String bookName){
+    //    db = new DatabaseHelper(getApplicationContext());
+        lst = new ArrayList<UserReview>();
+        UserReview userReview;
+//        Cursor result = db.getReview();
+
+        Call<ArrayList<UserReview>> call = service.getUserReviews();
+        call.enqueue(new Callback<ArrayList<UserReview>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserReview>> call, Response<ArrayList<UserReview>> response) {
+                //200 - Ok
+                Toast.makeText(getApplicationContext(),"Response code: "+response.code(),Toast.LENGTH_SHORT).show();
+                lst.clear();
+                for(UserReview review:response.body()){
+
+                    if(review.getUbook().toLowerCase().contains(bookName.toLowerCase())){
+                        lst.add(review);
+                        System.out.println("------------- "+review.getUreview());
+                    }
+                }
+
+                readerReviewAdapter = new ReaderReviewAdapter(getApplicationContext(),lst);
+                GridLayoutManager glm = new GridLayoutManager(getApplicationContext(),1);
+                glm.setOrientation(LinearLayoutManager.VERTICAL);
+                reviewRecyclerView.setLayoutManager(glm);
+                reviewRecyclerView.setAdapter(readerReviewAdapter);
+                readerReviewAdapter.notifyDataSetChanged();
             }
-        }
-        if(!lst.isEmpty()){
-            readerReviewAdapter = new ReaderReviewAdapter(getApplicationContext(),lst);
-            reviewRecyclerView.setAdapter(readerReviewAdapter);
-            readerReviewAdapter.notifyDataSetChanged();
-        }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserReview>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 }

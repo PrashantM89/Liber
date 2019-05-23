@@ -10,6 +10,29 @@
         android:layout_height="match_parent"
         android:id="@+id/library_recyclerview"
         >
-
     </android.support.v7.widget.RecyclerView>
+    <LinearLayout
+        android:id="@+id/error_layout_id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/no_connection_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/book_list_top_margin"
+            android:background="@drawable/no_connection"
+            android:contentDescription="@string/no_connection_icon_description"
+            android:gravity="center"
+            android:scaleType="centerCrop" />
+        <Button
+            android:id="@+id/tap_to_refresh_bttn_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tap to refresh"
+            />
+    </LinearLayout>
 </LinearLayout>

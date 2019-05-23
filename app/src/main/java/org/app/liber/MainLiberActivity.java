@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.app.liber.Service.LocationService;
+import org.app.liber.activity.MeActivity;
 import org.app.liber.activity.NotificationActivity;
 import org.app.liber.adapter.ViewPagerAdapter;
 import org.app.liber.helper.LocationHelper;
@@ -185,6 +186,9 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
+            case R.id.profile_id:
+                startActivity(new Intent(getApplicationContext(), MeActivity.class));
+                break;
             case R.id.share_id:
                 Intent intentShare = new Intent("android.intent.action.SEND");
                 intentShare.setType("text/plain");
