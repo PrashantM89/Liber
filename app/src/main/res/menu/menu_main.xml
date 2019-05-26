@@ -35,6 +35,13 @@
                 >
             </item>
             <item
+                android:id="@+id/profile_id"
+                android:title="Me"
+                android:icon="@drawable/ic_aboutus"
+                app:showAsAction="never"
+                >
+            </item>
+            <item
                 android:id="@+id/share_id"
                 android:title="Share"
                 android:icon="@drawable/ic_share"
@@ -44,19 +51,14 @@
                 android:id="@+id/order_sum_id"
                 android:title="Order Summary"
                 app:showAsAction="never"
-                android:icon="@drawable/ic_shopping_cart"
+                android:icon="@drawable/ic_shopping_cart_2"
                 >
             </item>
             <item android:id="@+id/aboutus_id"
-                android:title="About Us"
-                android:icon="@drawable/ic_aboutus"
+                android:title="Help"
+                android:icon="@drawable/ic_help"
                 app:showAsAction="never"
                 >
-            </item>
-            <item android:id="@+id/contactus_id"
-                android:title="Contact Us"
-                android:icon="@drawable/ic_contactus"
-                app:showAsAction="never">
             </item>
             <item
                 android:id="@+id/logout_id"

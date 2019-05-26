@@ -1,4 +1,4 @@
-package org.app.liber;
+package org.app.liber.adapter;
 
 import android.content.Context;
 import android.support.v4.view.PagerAdapter;
@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import org.app.liber.R;
 
 public class SlideAdapter extends PagerAdapter {
 
@@ -20,9 +22,9 @@ public class SlideAdapter extends PagerAdapter {
     }
 
     public String[] slide_text ={
-            "Liber is a global library, for the people and by the people.",
-            "Find your favourite books in Library and rent it. We will deliver it to your doorstep.",
-            "Upload your books, let others rent it from you. You earn from rental."
+            "Liber is a global library, for the people and by the people",
+            "Find your favourite books in Library and rent it. We will deliver it to your doorstep",
+            "Upload your books, let others rent it from you. You earn from the rental"
     };
 
     public int[] slide_img = {R.drawable.global_lib,R.drawable.import_book,R.drawable.rent_earn};

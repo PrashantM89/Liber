@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -9,6 +9,11 @@
 
     <style name="Liber.TextView.Heading" parent="@android:style/TextAppearance.Medium">
         <item name="android:textSize">@dimen/text_size_large</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
+
+    <style name="Liber.TextView.Heading_Small" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textSize">@dimen/text_size_small</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
@@ -29,4 +34,97 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="colorPrimaryDark">@android:color/transparent</item>
     </style>
+    <style name="MyActionBarTitleText"
+        parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="MeListRowLayout">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingEnd">@dimen/me_list_row_padding_horizontal</item>
+        <item name="android:paddingStart">@dimen/me_list_row_padding_horizontal</item>
+    </style>
+
+    <style name="MeListRowIcon">
+        <item name="android:tint">@color/neutral_600</item>
+        <item name="android:layout_width">@dimen/me_list_row_icon_size</item>
+        <item name="android:layout_height">@dimen/me_list_row_icon_size</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginTop">@dimen/margin_large</item>
+        <item name="android:layout_marginBottom">@dimen/margin_large</item>
+        <item name="android:layout_marginEnd">@dimen/margin_extra_large</item>
+    </style>
+
+    <style name="MeListRowTextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">@dimen/margin_extra_large</item>
+        <item name="android:textColor">@color/neutral_700</item>
+        <item name="android:textSize">@dimen/text_sz_large</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:gravity">start</item>
+    </style>
+
+    <style name="MeListSectionDividerView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:background">@color/divider</item>
+        <item name="android:layout_marginEnd" >@dimen/content_margin</item>
+        <item name="android:layout_marginStart" >@dimen/content_margin</item>
+    </style>
+
+    <style name="MyProfileRow">
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:padding">@dimen/margin_extra_large</item>
+    </style>
+
+    <style name="MyProfileLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/neutral_700</item>
+        <item name="android:textSize">@dimen/text_sz_large</item>
+    </style>
+
+    <style name="MyProfileText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/neutral</item>
+        <item name="android:textSize">@dimen/text_sz_medium</item>
+    </style>
+
+    <style name="MyProfileDividerView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">@color/divider</item>
+    </style>
+    <style name="Calypso.Dialog.Alert" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionModeStyle">@style/Calypso.ActionMode</item>
+        <item name="android:listDivider">@drawable/bg_rectangle_divider</item>
+        <item name="android:dividerHeight">@dimen/site_settings_divider_height</item>
+    </style>
+
+    <style name="Calypso.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="android:titleTextStyle">@style/Calypso.ActionMode.Text</item>
+        <item name="android:background">@color/neutral_400</item>
+    </style>
+    <style name="Calypso.ActionMode.Text">
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-light</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_sz_extra_large</item>
+    </style>
+
 </resources>

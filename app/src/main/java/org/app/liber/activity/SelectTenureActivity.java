@@ -10,13 +10,13 @@ import android.widget.Toast;
 
 import org.app.liber.R;
 import org.app.liber.SelectPaymentActivity;
-import org.app.liber.model.LibraryDataModel;
+import org.app.liber.pojo.BookshelfPojo;
 
 public class SelectTenureActivity extends AppCompatActivity {
 
     RadioButton weeks2, month1, months2;
     Button submit;
-    LibraryDataModel l;
+    BookshelfPojo l;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +30,7 @@ public class SelectTenureActivity extends AppCompatActivity {
 
 
         Intent i = getIntent();
-        l = (LibraryDataModel)i.getSerializableExtra("order_book");
+        l = (BookshelfPojo)i.getSerializableExtra("order_book");
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override

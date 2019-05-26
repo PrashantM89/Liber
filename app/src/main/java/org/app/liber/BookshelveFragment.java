@@ -120,7 +120,6 @@ public class BookshelveFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                System.out.println("ffffffffffffff "+newText);
                 final List<BookshelveDataModel> lst = filterBookshelfBooks(lstBookShelveBooks,newText);
                 recyclerViewAdapter.setLstBSBooks(lst);
                 recyclerViewAdapter.notifyDataSetChanged();

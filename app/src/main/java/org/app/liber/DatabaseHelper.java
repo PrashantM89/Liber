@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.widget.Toast;
 
 import org.app.liber.model.Book;
+import org.app.liber.model.BookReviewModel;
 import org.app.liber.model.UserTransactionModel;
 import org.app.liber.model.WalletModel;
 
@@ -52,6 +53,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_WLT_USR_MOB = "wlt_usr_mob";
     private static final String COL_WLT_DATE = "wlt_date";
 
+    //Review_tbl
+    private static final String REVIEW_TAB_NAME = "review_tbl";
+    private static final String REVIEW_NAME = "review_name";
+    private static final String REVIEW_RATING_STAR = "review_star";
+    private static final String REVIEW_SUMMRY = "review_summary";
+    private static final String REVIEW_BOOK_NAME = "review_book_name";
+
     Context c;
 
     public DatabaseHelper(@Nullable Context context) {
@@ -69,6 +77,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(createUsrTxTbl);
         String createUsrWltTbl = "CREATE TABLE " + USER_WALLET_TAB_NAME + "(" + COL_WLT_ID + " INT," + COL_WLT_AMT_ADDED + " INT," + COL_WLT_USR_MOB +" TEXT," + COL_WLT_DATE + " TEXT)";
         sqLiteDatabase.execSQL(createUsrWltTbl);
+        String createReviewTbl = "CREATE TABLE " + REVIEW_TAB_NAME + "(" + REVIEW_NAME + " TEXT," + REVIEW_RATING_STAR + " TEXT," + REVIEW_SUMMRY +" TEXT," + REVIEW_BOOK_NAME + " TEXT)";
+        sqLiteDatabase.execSQL(createReviewTbl);
     }
 
     @Override
@@ -77,10 +87,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ GLOBAL_LIB_TAB_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ USER_TX_TAB_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ USER_WALLET_TAB_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ REVIEW_TAB_NAME);
         onCreate(sqLiteDatabase);
     }
 
+    public boolean addReview(BookReviewModel review){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(REVIEW_NAME, review.getReaderName());
+        contentValues.put(REVIEW_RATING_STAR, review.getRatingStars());
+        contentValues.put(REVIEW_SUMMRY, review.getReviewStr());
+        contentValues.put(REVIEW_BOOK_NAME, review.getBookName());
 
+        long result = sqLiteDatabase.insert(REVIEW_TAB_NAME, null, contentValues);
+        if(result == -1){
+            Toast.makeText(c, "Your review couldn't be added. Try again.",Toast.LENGTH_SHORT).show();
+            return false;
+        }else{
+            Toast.makeText(c, "Your review is saved.",Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+    }
+
+
+    public Cursor getReview(){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        String query = "SELECT * FROM review_tbl";
+        Cursor data = sqLiteDatabase.rawQuery(query,null);
+
+        return data;
+    }
 
 
     public boolean addData(Book book){
@@ -102,8 +140,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-
-
     public boolean removeData(String book){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
         int i = sqLiteDatabase.delete(BOOKSHELVE_TAB_NAME, COL2 + "=?", new String[]{book});
@@ -119,10 +155,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public boolean addLibraryData(){
+
         pref = PreferenceManager.getDefaultSharedPreferences(c);
         SharedPreferences.Editor editor = pref.edit();
 
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
         ContentValues contentValues1 = new ContentValues();
         contentValues1.put(COL5, "2 States");
         contentValues1.put(COL6, "Chetan Bhagat");

@@ -2,37 +2,29 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
     >
-
-    <ImageView
-        android:id="@+id/splashImgView"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="100dp"
-        android:background="@mipmap/liber_launcher" />
 
     <TextView
         android:id="@+id/splashAppName"
-        android:layout_width="200dp"
-        android:layout_height="80dp"
-        android:layout_below="@id/splashImgView"
-        android:layout_centerHorizontal="true"
-        android:paddingLeft="18dp"
-        android:text="Liber"
-        android:textColor="@color/black"
-        android:textSize="70dp"
-        android:textStyle="bold|italic" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:fontFamily="cursive"
+        android:text=" Liber "
+        android:textColor="@color/colorPrimary"
+        android:textSize="75dp"
+         />
+
     <TextView
         android:layout_below="@id/splashAppName"
-        android:layout_width="200dp"
-        android:layout_height="90dp"
-        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:text="@string/tag_line"
+        android:fontFamily="cursive"
         android:textColor="@color/black"
         android:textSize="15dp"
-        android:paddingLeft="18dp"
+
         />
 
     <ProgressBar
@@ -44,6 +36,8 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="36dp"
         android:layout_marginBottom="113dp"
+        android:visibility="visible"
+        android:indeterminateTintMode="src_atop"
         android:layout_centerHorizontal="true"/>
 
     <TextView

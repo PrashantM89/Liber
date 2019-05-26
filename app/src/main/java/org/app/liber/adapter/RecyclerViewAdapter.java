@@ -15,6 +15,7 @@ import com.squareup.picasso.Picasso;
 import org.app.liber.R;
 import org.app.liber.RentSummaryActivity;
 import org.app.liber.model.LibraryDataModel;
+import org.app.liber.pojo.BookshelfPojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +23,17 @@ import java.util.List;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.MyViewHolder> {
 
     Context context;
-    ArrayList<LibraryDataModel> lstLibraryBooks;
+    //ArrayList<LibraryDataModel> lstLibraryBooks;
+    ArrayList<BookshelfPojo> lstLibraryBooks2;
+    String uploadedBy;
 
-    public void setLstLibraryBooks(ArrayList<LibraryDataModel> lstLibraryBooks) {
-        this.lstLibraryBooks = lstLibraryBooks;
+    public void setLstLibraryBooks(ArrayList<BookshelfPojo> lstLibraryBooks2) {
+        this.lstLibraryBooks2 = lstLibraryBooks2;
     }
 
-    public RecyclerViewAdapter(Context context, ArrayList<LibraryDataModel> lstLibraryBooks) {
+    public RecyclerViewAdapter(Context context, ArrayList<BookshelfPojo> lstLibraryBooks2) {
         this.context = context;
-        this.lstLibraryBooks = lstLibraryBooks;
+        this.lstLibraryBooks2 = lstLibraryBooks2;
     }
 
     @Override
@@ -45,20 +48,22 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(MyViewHolder myViewHolder, int i) {
-        myViewHolder.tvBookName.setText(lstLibraryBooks.get(i).getBookTitle());
+        myViewHolder.tvBookName.setText(lstLibraryBooks2.get(i).getTitle());
         //myViewHolder.tvAuthor.setText(lstLibraryBooks.get(i).getAuthor());
-        Picasso.with(context).load(lstLibraryBooks.get(i).getSmallThumbnailLink()).into(myViewHolder.ivCover);
+        myViewHolder.tvUserName.setText(lstLibraryBooks2.get(i).getU_id());
+        Picasso.with(context).load(lstLibraryBooks2.get(i).getCoverImgUrl()).into(myViewHolder.ivCover);
     }
 
     @Override
     public int getItemCount() {
-        return lstLibraryBooks.size();
+        return lstLibraryBooks2.size();
     }
 
     public  class MyViewHolder extends RecyclerView.ViewHolder{
 
         private TextView tvBookName;
         private TextView tvAuthor;
+        private TextView tvUserName;
         private ImageView ivCover;
         private CardView rentItBttn;
 
@@ -67,66 +72,75 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
             tvBookName = (TextView)itemView.findViewById(R.id.cardview_book_title_id);
             //tvAuthor = (TextView)itemView.findViewById(R.id.library_authors);
+            tvUserName = (TextView)itemView.findViewById(R.id.cardview_book_usr_id);
             ivCover = (ImageView)itemView.findViewById(R.id.cardview_book_img_id);
             rentItBttn = (CardView) itemView.findViewById(R.id.card_view_main_id);
             rentItBttn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(view.getContext(), RentSummaryActivity.class);
-                    LibraryDataModel lib = new LibraryDataModel(lstLibraryBooks.get(getPosition()).getBookTitle().toString(),lstLibraryBooks.get(getPosition()).getAuthor().toString(),lstLibraryBooks.get(getPosition()).getSmallThumbnailLink().toString(),lstLibraryBooks.get(getPosition()).getDescription(),lstLibraryBooks.get(getPosition()).getGenre(),lstLibraryBooks.get(getPosition()).getAvgRating());
+                    BookshelfPojo lib = new BookshelfPojo();
+                    lib.setTitle(lstLibraryBooks2.get(getPosition()).getTitle());
+                    lib.setAuthor(lstLibraryBooks2.get(getPosition()).getAuthor());
+                    lib.setCoverImgUrl(lstLibraryBooks2.get(getPosition()).getCoverImgUrl());
+                    lib.setDescription(lstLibraryBooks2.get(getPosition()).getDescription());
+                    lib.setGenre(lstLibraryBooks2.get(getPosition()).getGenre());
+                    lib.setRating(lstLibraryBooks2.get(getPosition()).getRating());
+                    lib.setU_id(lstLibraryBooks2.get(getPosition()).getU_id());
+
                     intent.putExtra("LibraryBookDetail",lib);
-                    intent.putExtra("LibraryObject",lstLibraryBooks);
+                    intent.putExtra("LibraryObject",lstLibraryBooks2);
                     view.getContext().startActivity(intent);
                 }
             });
         }
     }
 
-    public LibraryDataModel removeItem(int position) {
-        final LibraryDataModel model = lstLibraryBooks.remove(position);
+    public BookshelfPojo removeItem(int position) {
+        final BookshelfPojo model = lstLibraryBooks2.remove(position);
         notifyItemRemoved(position);
         return model;
     }
 
-    public void addItem(int position, LibraryDataModel model) {
-        lstLibraryBooks.add(position, model);
+    public void addItem(int position, BookshelfPojo model) {
+        lstLibraryBooks2.add(position, model);
         notifyItemInserted(position);
     }
 
     public void moveItem(int fromPosition, int toPosition) {
-        final LibraryDataModel model = lstLibraryBooks.remove(fromPosition);
-        lstLibraryBooks.add(toPosition, model);
+        final BookshelfPojo model = lstLibraryBooks2.remove(fromPosition);
+        lstLibraryBooks2.add(toPosition, model);
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    public void animateTo(List<LibraryDataModel> models) {
+    public void animateTo(List<BookshelfPojo> models) {
         applyAndAnimateRemovals(models);
         applyAndAnimateAdditions(models);
         applyAndAnimateMovedItems(models);
     }
 
-    private void applyAndAnimateRemovals(List<LibraryDataModel> newModels) {
-        for (int i = lstLibraryBooks.size() - 1; i >= 0; i--) {
-            final LibraryDataModel model = lstLibraryBooks.get(i);
+    private void applyAndAnimateRemovals(List<BookshelfPojo> newModels) {
+        for (int i = lstLibraryBooks2.size() - 1; i >= 0; i--) {
+            final BookshelfPojo model = lstLibraryBooks2.get(i);
             if (!newModels.contains(model)) {
                 removeItem(i);
             }
         }
     }
 
-    private void applyAndAnimateAdditions(List<LibraryDataModel> newModels) {
+    private void applyAndAnimateAdditions(List<BookshelfPojo> newModels) {
         for (int i = 0, count = newModels.size(); i < count; i++) {
-            final LibraryDataModel model = newModels.get(i);
-            if (!lstLibraryBooks.contains(model)) {
+            final BookshelfPojo model = newModels.get(i);
+            if (!lstLibraryBooks2.contains(model)) {
                 addItem(i, model);
             }
         }
     }
 
-    private void applyAndAnimateMovedItems(List<LibraryDataModel> newModels) {
+    private void applyAndAnimateMovedItems(List<BookshelfPojo> newModels) {
         for (int toPosition = newModels.size() - 1; toPosition >= 0; toPosition--) {
-            final LibraryDataModel model = newModels.get(toPosition);
-            final int fromPosition = lstLibraryBooks.indexOf(model);
+            final BookshelfPojo model = newModels.get(toPosition);
+            final int fromPosition = lstLibraryBooks2.indexOf(model);
             if (fromPosition >= 0 && fromPosition != toPosition) {
                 moveItem(fromPosition, toPosition);
             }

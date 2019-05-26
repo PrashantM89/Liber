@@ -18,4 +18,24 @@
     <color name="highlight">#FFFF00</color>
     <color name="imp">#FF0000</color>
     <color name="inactive">#D8D8D8</color>
+    <color name="deepSkyBlue">#00BFFF</color>
+    <color name="transparentBlack">#40000000</color>
+    <color name="neutral">#636d75</color>
+    <color name="neutral_0">#f6f6f6</color>
+    <color name="neutral_700">#3d4145</color>
+    <color name="neutral_400">#7c848b</color>
+    <color name="neutral_500">#636d75</color>
+    <color name="neutral_600">#50575d</color>
+    <color name="neutral_800">#2b2d2f</color>
+    <color name="divider">#e1e2e2</color>
+    <color name="primary_500">#016087</color>
+
+    <!-- TRANSLUCENT -->
+    <color name="black_translucent_20">#33000000</color>
+    <color name="black_translucent_40">#66000000</color>
+    <color name="black_translucent_50">#80000000</color>
+    <color name="grey_lighten_30_translucent_50">#80e9eff3</color> <!-- Use for old Stats.  Will be removed soon. -->
+    <color name="white_translucent_40">#66ffffff</color>
+    <color name="white_translucent_65">#a6ffffff</color>
+    <color name="button_color">#1B43BA</color>
 </resources>

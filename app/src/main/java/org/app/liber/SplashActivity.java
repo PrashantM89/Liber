@@ -1,6 +1,7 @@
 package org.app.liber;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -20,9 +21,7 @@ import org.app.liber.helper.DatabaseHelper;
 
 public class SplashActivity extends AppCompatActivity {
 
-    private String city = "";
-    private boolean isLibraryLoaded = false;
-
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,26 +35,16 @@ public class SplashActivity extends AppCompatActivity {
             DrawableCompat.setTint(wrapDrawable, 0xffffffff);
             progressBar.setIndeterminateDrawable(DrawableCompat.unwrap(wrapDrawable));
         } else {
-            progressBar.getIndeterminateDrawable().setColorFilter(0xffffffff, PorterDuff.Mode.SRC_IN);
+        //    progressBar.getIndeterminateDrawable().setColorFilter(0xffffffff, PorterDuff.Mode.SRC_IN);
         }
-        progressBar.getIndeterminateDrawable().setColorFilter(0xffffffff, PorterDuff.Mode.SRC_IN);
-
-
-
+      //  progressBar.getIndeterminateDrawable().setColorFilter(0xffffffff, PorterDuff.Mode.SRC_IN);
 
         Completable.create(new CompletableOnSubscribe() {
             @Override
             public void subscribe(CompletableEmitter subscriber) throws Exception {
-                // Trigger schema updates
-                //LiberDBAdapter.getInstance().open(getApplicationContext());
-                //LiberDBAdapter.getInstance().close();
-
                 DatabaseHelper db = new DatabaseHelper(getApplicationContext());
                     //db.recreateTables();
-                    db.addLibraryData();
-
-
-
+                     db.addLibraryData();
                 Thread.sleep(2000);
                 subscriber.onComplete();
             }
@@ -66,7 +55,6 @@ public class SplashActivity extends AppCompatActivity {
                     @Override
                     public void run() throws Exception {
                         Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
-                        intent.putExtra("location",city);
                         SplashActivity.this.startActivity(intent);
                         SplashActivity.this.finish();
                     }

@@ -29,7 +29,7 @@
         <TextView
             android:id="@+id/cardview_book_title_id"
             android:layout_width="match_parent"
-            android:layout_height="38dp"
+            android:layout_height="35dp"
             android:background="@color/white"
             android:paddingLeft="3dp"
             android:paddingTop="2dp"
@@ -52,7 +52,6 @@
                 android:id="@+id/cardview_book_usr_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Prashant Mishra"
                 android:textSize="9sp"
                 android:maxLength="20"
                 android:background="@color/white"

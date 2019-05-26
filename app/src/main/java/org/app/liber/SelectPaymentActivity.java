@@ -1,8 +1,10 @@
 package org.app.liber;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +19,8 @@ import android.widget.Toast;
 
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.model.Book;
-import org.app.liber.model.LibraryDataModel;
 import org.app.liber.model.UserTransactionModel;
+import org.app.liber.pojo.BookshelfPojo;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,24 +36,29 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private TextView orderTitle;
     private Button gpayBtn;
     private Button codBtn;
-    private static final int TEZ_REQUEST_CODE = 123;
-    private static final String GOOGLE_TEZ_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
-    Intent j;
+    private Button paytmBtn;
+    //private static final int TEZ_REQUEST_CODE = 123;
+    //private static final String GOOGLE_TEZ_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
+    private Intent j;
     private DatabaseHelper databaseHelper;
-    LibraryDataModel l;
+    private BookshelfPojo l;
     private CheckBox walletChckBox;
     private TextView totalAmntTxt;
     private TextView walletAmntTxt;
     private TextView walletblncAmntTxt;
     private TextView returnDateTxt;
     private TextView dateExtFeesTxt;
-    int bookAmnt = 70;
-    int walletAmnt = 0;
-    LinearLayout linearLayout;
-    String tenureSelected;
-    Date today;
-    int noofdays = 0;
-    Calendar calendar;
+    private TextView gstTxt;
+    private int bookAmnt = 70;
+    private int walletAmnt = 0;
+    private LinearLayout linearLayout;
+    private String tenureSelected;
+    private Date today;
+    private int noofdays = 0;
+    private Calendar calendar;
+    private SharedPreferences pref;
+    private String userLocation;
+    private double gstAmount = 0.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,19 +73,34 @@ public class SelectPaymentActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
         databaseHelper = new DatabaseHelper(getApplicationContext());
         walletAmnt = databaseHelper.getWalletAmnt("7338239977");
-        // orderImg = (ImageView)findViewById(R.id.os_img_id);
         linearLayout = (LinearLayout)findViewById(R.id.linearLayForSnackBar);
         orderTitle = (TextView)findViewById(R.id.os_title_id);
         codBtn = (Button)findViewById(R.id.cod_bttn_id);
         gpayBtn = (Button)findViewById(R.id.gpay_bttn_id);
+        paytmBtn = (Button)findViewById(R.id.paytm_bttn_id);
         returnDateTxt = (TextView)findViewById(R.id.due_date_id);
         walletChckBox = (CheckBox)findViewById(R.id.wallet_chckbox_id);
         walletAmntTxt = (TextView)findViewById(R.id.wallet_amount_id);
         totalAmntTxt = (TextView)findViewById(R.id.total_payable_amount_id);
         walletblncAmntTxt = (TextView)findViewById(R.id.wallet_blnc_amnt_id);
         dateExtFeesTxt = (TextView)findViewById(R.id.date_ext_fees_id);
+        gstTxt = (TextView)findViewById(R.id.gst_amount_id);
+
+        userLocation = pref.getString("user_location","unknown");
+
+
+        if(userLocation.equals("unknown") || userLocation == null){
+            codBtn.setEnabled(false);
+            gpayBtn.setEnabled(false);
+            paytmBtn.setEnabled(false);
+        }else{
+            codBtn.setEnabled(true);
+            gpayBtn.setEnabled(true);
+            paytmBtn.setEnabled(true);
+        }
 
         today = new Date();
         calendar = Calendar.getInstance();
@@ -88,7 +110,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
 
         Intent i = getIntent();
 
-        l = (LibraryDataModel)i.getSerializableExtra("order_book2");
+        l = (BookshelfPojo)i.getSerializableExtra("order_book2");
         tenureSelected = i.getStringExtra("tenure_selected");
 
         if(tenureSelected.equals("1")){
@@ -111,7 +133,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         }
         //Picasso.with(getApplicationContext()).load(l.getSmallThumbnailLink()).resize(100,150).into(orderImg);
 
-        orderTitle.setText(l.getBookTitle());
+        orderTitle.setText(l.getTitle());
         walletblncAmntTxt.setText(String.valueOf(walletAmnt));
         walletAmntTxt.setText("0");
         totalAmntTxt.setText(finalAmountRvrs());
@@ -119,6 +141,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         codBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                     j = new Intent(getApplicationContext(), OrderCompleteActivity.class);
                     j.putExtra("tx_mode","Cash");
                     Date c = Calendar.getInstance().getTime();
@@ -133,7 +156,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setTxDate(formattedDate);
                     usrTx.setDeliveryStatus("Pending");
                     databaseHelper.addUsrTxData(usrTx);
-                    databaseHelper.addData(new Book(l.getBookTitle().toString(),l.getAuthor(),l.getSmallThumbnailLink(),l.getDescription(),l.getGenre(),""));
+                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
                     startActivity(j);
             }
         });
@@ -152,7 +175,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
  ///               intent.setPackage(GOOGLE_TEZ_PACKAGE_NAME);
                 intent.setData(uri);
 
-                Intent chooser = Intent.createChooser(intent,"Pay using UPI app");
+                Intent chooser = Intent.createChooser(intent,"Pay using any UPI app");
 
                 if(chooser.resolveActivity(getPackageManager())!=null){
                     startActivityForResult(intent, 0);
@@ -168,7 +191,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (((CheckBox) view).isChecked()) {
                     totalAmntTxt.setText(finalAmount());
-                    walletAmntTxt.setText(String.valueOf(bookAmnt-Integer.parseInt(totalAmntTxt.getText().toString())));
+                    walletAmntTxt.setText(String.valueOf(Double.valueOf(bookAmnt)-Double.parseDouble(totalAmntTxt.getText().toString())));
                 }else{
                     totalAmntTxt.setText(finalAmountRvrs());
                     walletAmntTxt.setText("0");
@@ -218,7 +241,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setDeliveryStatus("Pending");
 
                     databaseHelper.addUsrTxData(usrTx);
-                    databaseHelper.addData(new Book(l.getBookTitle().toString(),l.getAuthor(),l.getSmallThumbnailLink(),l.getDescription(),l.getGenre(),""));
+                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
                     startActivity(j);
                 }
             }
@@ -226,22 +249,37 @@ public class SelectPaymentActivity extends AppCompatActivity {
     }
 
     public String finalAmount(){
-
+        String finalAmount;
         if(walletAmnt>=0 && walletAmnt<=bookAmnt){
-            return  String.valueOf(bookAmnt - walletAmnt);
+            finalAmount = String.valueOf(bookAmnt - walletAmnt);
+            gstAmount = calculateTotalGST(finalAmount);
+            return  String.valueOf(Double.parseDouble(finalAmount)+gstAmount);
         }else if(walletAmnt>bookAmnt){
             walletAmntTxt.setText(String.valueOf(bookAmnt));
-            return String.valueOf(0);
+            finalAmount = String.valueOf(0);
+            return finalAmount;
         } else{
-            return String.valueOf(bookAmnt);
+            finalAmount = String.valueOf(bookAmnt);
+            gstAmount = calculateTotalGST(finalAmount);
+            return  String.valueOf(Double.parseDouble(finalAmount)+gstAmount);
         }
+    }
+
+    private double calculateTotalGST(String beforeGST) {
+        double gstPerc = 0.05;
+        double b4GST = Double.valueOf(beforeGST);
+        double afterGST = gstPerc * b4GST;
+
+        gstTxt.setText(String.valueOf(afterGST));
+        return afterGST;
     }
 
     public String finalAmountRvrs(){
         int walletAmnt = 0;
         //int bookAmnt = 70;
-
-        return String.valueOf(bookAmnt);
+       gstAmount = calculateTotalGST(String.valueOf(bookAmnt));
+       Double doubleBookAmnt = Double.valueOf(bookAmnt);
+        return String.valueOf(doubleBookAmnt+gstAmount);
     }
 
     @Override
