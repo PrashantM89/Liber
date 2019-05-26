@@ -90,7 +90,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         gstTxt = (TextView)findViewById(R.id.gst_amount_id);
 
         userLocation = pref.getString("user_location","unknown");
-        Toast.makeText(getApplicationContext(),"Your location is "+userLocation,Toast.LENGTH_SHORT).show();
+
 
         if(userLocation.equals("unknown") || userLocation == null){
             codBtn.setEnabled(false);

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,10 +8,15 @@
 
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/library_recyclerview"
         >
     </android.support.v7.widget.RecyclerView>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
     <LinearLayout
         android:id="@+id/error_layout_id"
         android:layout_width="match_parent"
@@ -21,18 +27,28 @@
 
         <ImageView
             android:id="@+id/no_connection_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/book_list_top_margin"
-            android:background="@drawable/no_connection"
-            android:contentDescription="@string/no_connection_icon_description"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_marginTop="@dimen/avatar_sz_large"
+            android:background="@drawable/try_again"
+            android:contentDescription="@string/something_wrong_description"
             android:gravity="center"
             android:scaleType="centerCrop" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/something_wrong_description"/>
         <Button
             android:id="@+id/tap_to_refresh_bttn_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tap to refresh"
+            android:background="@color/colorPrimary"
+            android:layout_marginTop="250dp"
+            android:padding="10dp"
+            android:textColor="@color/white"
             />
     </LinearLayout>
+    </FrameLayout>
 </LinearLayout>

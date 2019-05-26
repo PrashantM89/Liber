@@ -1,9 +1,9 @@
 package org.app.liber;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,12 +11,16 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.squareup.picasso.Picasso;
-
-import org.app.liber.model.BookReviewModel;
 import org.app.liber.model.BookshelveDataModel;
-import org.w3c.dom.Text;
+import org.app.liber.pojo.UserReview;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class BookShelfItemExpandActivity extends AppCompatActivity {
 
@@ -27,8 +31,9 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
     TextView ratingTxt;
     Button submitReview;
     EditText bookReviewStr;
-    DatabaseHelper databaseHelper;
     String ratingBarCount;
+    LiberEndpointInterface service;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,8 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
         submitReview = (Button)findViewById(R.id.submit_review_btn_id);
         bookReviewStr = (EditText)findViewById(R.id.book_review_text);
         ratingBarCount = "";
+        service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
+
 //        bookAvailable = (TextView)findViewById(R.id.expand_book_availability_id);
 //        BookDuedate = (TextView)findViewById(R.id.expand_book_duedate_id);
         i = getIntent();
@@ -61,11 +68,11 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    int ratingInt = (int) rating;
+                    float ratingInt =  rating;
                     ratingBarCount = String.valueOf(ratingInt);
 
                     //Toast.makeText(getApplicationContext(), String.valueOf(rating), Toast.LENGTH_SHORT).show();
-                    switch (ratingInt){
+                    switch ((int) ratingInt){
                         case 1:
                             ratingTxt.setText(R.string.rating_1);
                             ratingTxt.setVisibility(View.VISIBLE);
@@ -97,9 +104,41 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
        submitReview.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               databaseHelper = new DatabaseHelper(getApplicationContext());
-               BookReviewModel bookReviewModel = new BookReviewModel(bookReviewStr.getText().toString(),bookname.getText().toString(),ratingBarCount,"Prashant");
-               databaseHelper.addReview(bookReviewModel);
+
+            progressDialog = new ProgressDialog(BookShelfItemExpandActivity.this);
+            progressDialog.setMessage(getApplicationContext().getString(R.string.processing_review_upload_label));
+            progressDialog.setCancelable(false);
+            progressDialog.setIndeterminate(true);
+            progressDialog.show();
+
+            DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            String today = formatter.format(new Date());
+
+            UserReview review = new UserReview();
+            review.setUbook(bookname.getText().toString());
+            //To-Do: Make it dynamic.
+            review.setUid("Prashant");
+            review.setUreview(bookReviewStr.getText().toString());
+            review.setUstar(ratingBarCount);
+            review.setUdate(today);
+
+            Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertUserReviewOnABook(review);
+
+            call.enqueue(new Callback<ResponseBody>() {
+                   @Override
+                   public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                       progressDialog.dismiss();
+                       Toast.makeText(getApplicationContext(),"Review Saved",Toast.LENGTH_SHORT).show();
+                   }
+
+                   @Override
+                   public void onFailure(Call<ResponseBody> call, Throwable t) {
+                       progressDialog.dismiss();
+                       Toast.makeText(getApplicationContext(),"Failed uploading review : "+t.getMessage(),Toast.LENGTH_SHORT).show();
+                   }
+            });
+
+
            }
        });
     }

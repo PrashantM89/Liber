@@ -31,7 +31,7 @@ public interface LiberEndpointInterface {
     Call<ArrayList<UserReview>> getUserReviews();
 
     @POST("review/uploadReview")
-    Call<ResponseBody> insertUserReviewOnABook(@Body UserReview userReview, @Query("uid")String u_id);
+    Call<ResponseBody> insertUserReviewOnABook(@Body UserReview userReview);
 
 
 }

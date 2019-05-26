@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import org.app.liber.adapter.RecyclerViewAdapter;
 import org.app.liber.helper.DatabaseHelper;
+import org.app.liber.helper.ToastUtil;
 import org.app.liber.model.LibraryDataModel;
 import org.app.liber.pojo.BookshelfPojo;
 import java.util.ArrayList;
@@ -54,8 +55,8 @@ public class LibraryFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, final Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.library_fragment,container,false);
         recyclerView = (RecyclerView)v.findViewById(R.id.library_recyclerview);
-        errorLayout = (LinearLayout)v.findViewById(R.id.error_layout_id);
         tap2Refresh = (Button)v.findViewById(R.id.tap_to_refresh_bttn_id);
+        errorLayout = (LinearLayout)v.findViewById(R.id.error_layout_id);
         return v;
     }
 
@@ -64,24 +65,41 @@ public class LibraryFragment extends Fragment{
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
+
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage(getContext().getString(R.string.processing_label));
         progressDialog.setCancelable(true);
         progressDialog.setIndeterminate(true);
         loadLibraryData();
+
     }
 
     public void loadLibraryData(){
+
         lstLibraryBooks = new ArrayList<>();
         progressDialog.show();
         Call<ArrayList<BookshelfPojo>> call = service.getBooks();
         call.enqueue(new Callback<ArrayList<BookshelfPojo>>() {
             @Override
             public void onResponse(Call<ArrayList<BookshelfPojo>> call, Response<ArrayList<BookshelfPojo>> response) {
-                progressDialog.dismiss();
-                recyclerViewAdapter = new RecyclerViewAdapter(getContext(),lstLibraryBooks = response.body());
-                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
-                recyclerView.setAdapter(recyclerViewAdapter);
+
+                if(response.code() == 200){
+                    progressDialog.dismiss();
+                    errorLayout.setVisibility(View.GONE);
+                    recyclerViewAdapter = new RecyclerViewAdapter(getContext(),lstLibraryBooks = response.body());
+                    recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
+                    recyclerView.setAdapter(recyclerViewAdapter);
+                }else{
+                    progressDialog.dismiss();
+                    errorLayout.setVisibility(View.VISIBLE);
+
+                    tap2Refresh.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            loadLibraryData();
+                        }
+                    });
+                }
             }
 
             @Override
@@ -94,15 +112,16 @@ public class LibraryFragment extends Fragment{
                         loadLibraryData();
                     }
                 });
-
             }
         });
+
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         final MenuItem searchItem = menu.findItem(R.id.search_id);
+
         searchView = (SearchView)searchItem.getActionView();
         searchView.setQueryHint("Type book, author or genre");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -136,12 +155,11 @@ public class LibraryFragment extends Fragment{
     }
 
     private ArrayList<BookshelfPojo> filterLibraryBooks(List<BookshelfPojo> lstBooks, String query){
-        //query = query.toLowerCase();
-        System.out.println("Ouery------------- "+query.toLowerCase());
+
         final ArrayList<BookshelfPojo> filteredList = new ArrayList<>();
         for(BookshelfPojo b:lstBooks){
             final String text = b.getTitle().toLowerCase()+" "+b.getGenre().toLowerCase()+" "+b.getAuthor().toLowerCase();
-            System.out.println("Text------------- "+text);
+
             if(text.contains(query.toLowerCase())){
                 filteredList.add(b);
             }

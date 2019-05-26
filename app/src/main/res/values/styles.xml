@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
@@ -107,6 +107,24 @@
         <item name="android:layout_height">1dp</item>
         <item name="android:background">@color/divider</item>
     </style>
+    <style name="Calypso.Dialog.Alert" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="actionModeStyle">@style/Calypso.ActionMode</item>
+        <item name="android:listDivider">@drawable/bg_rectangle_divider</item>
+        <item name="android:dividerHeight">@dimen/site_settings_divider_height</item>
+    </style>
 
+    <style name="Calypso.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="android:titleTextStyle">@style/Calypso.ActionMode.Text</item>
+        <item name="android:background">@color/neutral_400</item>
+    </style>
+    <style name="Calypso.ActionMode.Text">
+        <item name="android:fontFamily" tools:ignore="NewApi">sans-serif-light</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_sz_extra_large</item>
+    </style>
 
 </resources>

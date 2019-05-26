@@ -90,8 +90,6 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
             mPutOnShelfBtnView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-//                    Book b = new Book(mValues.get(getPosition()).title,mValues.get(getPosition()).authors,mValues.get(getPosition()).smallThumbnailLink,mValues.get(getPosition()).description, mValues.get(getPosition()).genre,"");
-//                    databaseHelper.addData(b);
 
                     progressDialog = new ProgressDialog(mContext);
                     progressDialog.setMessage(mContext.getString(R.string.processing_label));

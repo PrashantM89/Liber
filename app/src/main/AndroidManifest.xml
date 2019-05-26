@@ -48,7 +48,8 @@
         <activity android:name=".MainLiberActivity" />
         <activity android:name=".RentSummaryActivity" />
         <activity android:name=".BookShelfItemExpandActivity" />
-
+        <meta-data android:name="com.google.android.geo.API_KEY"
+                    android:value="@string/api_key"/>
         <service android:name=".Service.LocationService" />
     </application>
 

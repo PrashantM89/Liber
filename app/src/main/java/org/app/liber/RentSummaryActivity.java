@@ -1,5 +1,6 @@
 package org.app.liber;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -20,7 +21,9 @@ import android.text.style.ClickableSpan;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,10 +55,11 @@ public class RentSummaryActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView reviewRecyclerView;
     private ArrayList<BookshelfPojo> lstOfMoreBooksByThisAuthor;
-    private ArrayList<BookReviewModel> lstOfReaderReviews;
     private DatabaseHelper db;
     private LiberEndpointInterface service;
     private ArrayList<UserReview> lst;
+    private HorizontalScrollView moreBySameAuthorLayout;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,10 +77,10 @@ public class RentSummaryActivity extends AppCompatActivity {
         });
 
         lstOfMoreBooksByThisAuthor = new ArrayList<>();
-        lstOfReaderReviews =  new ArrayList<>();
         recyclerView = (RecyclerView)findViewById(R.id.more_author_book_recyclerview);
         reviewRecyclerView = (RecyclerView)findViewById(R.id.reader_review_recyclerview);
 
+        moreBySameAuthorLayout = (HorizontalScrollView)findViewById(R.id.horizontalScrollView);
         rentBookCover=(ImageView)findViewById(R.id.rent_summary_img_cover);
         rentBookTitle=(TextView)findViewById(R.id.rent_summary_book_title);
         rentBookAuthor=(TextView)findViewById(R.id.rent_summary_book_author);
@@ -97,7 +101,13 @@ public class RentSummaryActivity extends AppCompatActivity {
         }
 
 
-        recyclerViewAdapter = new MoreByAuthorAdapter(getApplicationContext(),lstOfMoreBooksByThisAuthor);
+        if(lstOfMoreBooksByThisAuthor.size()>0){
+            moreBySameAuthorLayout.setVisibility(View.VISIBLE);
+            recyclerViewAdapter = new MoreByAuthorAdapter(getApplicationContext(),lstOfMoreBooksByThisAuthor);
+        }else{
+            moreBySameAuthorLayout.setVisibility(View.GONE);
+        }
+
 
         loadReviews(l.getTitle());
 
@@ -220,8 +230,7 @@ public class RentSummaryActivity extends AppCompatActivity {
         call.enqueue(new Callback<ArrayList<UserReview>>() {
             @Override
             public void onResponse(Call<ArrayList<UserReview>> call, Response<ArrayList<UserReview>> response) {
-                //200 - Ok
-                Toast.makeText(getApplicationContext(),"Response code: "+response.code(),Toast.LENGTH_SHORT).show();
+
                 lst.clear();
                 for(UserReview review:response.body()){
 
