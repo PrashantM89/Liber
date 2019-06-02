@@ -37,6 +37,8 @@
     <string name="wallet_subtitle">Get your books to work. Upload them on Liber and earn ₹3 on every book upload and more on rental.</string>
     <string name="order_subtitle">Book will be delivered to you by tomorrow. Our executive will contact you soon for delivery. Check order summary to track your order.</string>
     <string name="processing_label">Loading...</string>
+    <string name="processing_txn_label">Processing..</string>
+    <string name="processing_bookshelf_label">Loading your bookshelf..</string>
     <string name="processing_review_upload_label">Saving review</string>
     <string name="Open">Open</string>
     <string name="Close">Close</string>

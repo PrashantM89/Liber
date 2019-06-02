@@ -1,5 +1,6 @@
 package org.app.liber;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -8,6 +9,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -17,18 +19,26 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.app.liber.adapter.RecyclerViewAdapter;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.model.Book;
 import org.app.liber.model.UserTransactionModel;
 import org.app.liber.pojo.BookshelfPojo;
+import org.app.liber.pojo.TransactionPojo;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class SelectPaymentActivity extends AppCompatActivity {
 
@@ -37,6 +47,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private Button gpayBtn;
     private Button codBtn;
     private Button paytmBtn;
+    private ProgressDialog progressDialog;
     //private static final int TEZ_REQUEST_CODE = 123;
     //private static final String GOOGLE_TEZ_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
     private Intent j;
@@ -59,6 +70,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private SharedPreferences pref;
     private String userLocation;
     private double gstAmount = 0.0;
+    private LiberEndpointInterface service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +85,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         databaseHelper = new DatabaseHelper(getApplicationContext());
         walletAmnt = databaseHelper.getWalletAmnt("7338239977");
@@ -145,18 +158,22 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     j = new Intent(getApplicationContext(), OrderCompleteActivity.class);
                     j.putExtra("tx_mode","Cash");
                     Date c = Calendar.getInstance().getTime();
-                    System.out.println("Current time => " + c);
 
-                    SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
+                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
                     String formattedDate = df.format(c);
-                    UserTransactionModel usrTx = new UserTransactionModel();
+                    TransactionPojo usrTx = new TransactionPojo();
                     usrTx.setTxId(String.valueOf(c.getTime()));
-                    usrTx.setTxMode("CASH");
-                    usrTx.setTxStatus("SUCCESS");
+                    usrTx.setTxPaymentMode("CASH");
                     usrTx.setTxDate(formattedDate);
-                    usrTx.setDeliveryStatus("Pending");
-                    databaseHelper.addUsrTxData(usrTx);
-                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
+                    usrTx.setTxDeliverySts("Pending");
+                    usrTx.setTxAmount(totalAmntTxt.getText().toString());
+                    usrTx.setTxDelete("N");
+                    usrTx.setTxMob("7338239977");
+                    usrTx.setTxDeliveryDate(formattedDate);
+                    usrTx.setTxType("Renter");
+                    usrTx.setTxUser("Sandwista");
+                    usrTx.setTxReturnDate(returnDateTxt.getText().toString());
+                    saveTxn(usrTx);
                     startActivity(j);
             }
         });
@@ -200,6 +217,30 @@ public class SelectPaymentActivity extends AppCompatActivity {
         });
     }
 
+    private void saveTxn(TransactionPojo transactionPojo){
+        progressDialog = new ProgressDialog(getApplicationContext());
+        progressDialog.setMessage(getApplicationContext().getString(R.string.processing_txn_label));
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+
+        Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertUserTxn(transactionPojo);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(),"Transaction Saved",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(),"Failed uploading transaction details : "+t.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -210,12 +251,11 @@ public class SelectPaymentActivity extends AppCompatActivity {
                 Bundle bundle = data.getExtras();
                 Set<String> keys = bundle.keySet();
                 for (String key : keys) {
-                    System.out.println(" --------> "+key + " -> "+ bundle.getString(key));
+
                 }
                 String txn = data.getStringExtra("response");
                 String txnId="";
-                System.out.println(" xxxxxxxxxxxxx : "+txn);
-                Toast.makeText(getApplicationContext(),"result :"+txn,Toast.LENGTH_LONG).show();
+
 
                 if(txn.toLowerCase().contains("success") || txn.contains("SUCCESS")){
                      j = new Intent(getApplicationContext(), OrderCompleteActivity.class);
@@ -225,11 +265,9 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     Pattern p = Pattern.compile(pattern);
                     Matcher m = p.matcher(txn);
                     while(m.find()) {
-                        System.out.println("Tx Id: "+m.group());
                         txnId = m.group();
                     }
                     Date c = Calendar.getInstance().getTime();
-                    System.out.println("Current time => " + c);
 
                     SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
                     String formattedDate = df.format(c);

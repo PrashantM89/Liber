@@ -28,6 +28,10 @@ public class BookshelfPojo implements Serializable {
     @SerializedName("user")
     @Expose
     private String u_id;
+    @SerializedName("available")
+    @Expose
+    private String available;
+
 
     public String getTitle() {
         return title;
@@ -80,4 +84,12 @@ public class BookshelfPojo implements Serializable {
     public String getU_id() { return u_id; }
 
     public void setU_id(String u_id) { this.u_id = u_id; }
+
+    public String getAvailable() { return available; }
+
+    public void setAvailable(String available) {
+        this.available = available;
+    }
+
+
 }

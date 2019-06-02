@@ -71,7 +71,6 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
                     float ratingInt =  rating;
                     ratingBarCount = String.valueOf(ratingInt);
 
-                    //Toast.makeText(getApplicationContext(), String.valueOf(rating), Toast.LENGTH_SHORT).show();
                     switch ((int) ratingInt){
                         case 1:
                             ratingTxt.setText(R.string.rating_1);

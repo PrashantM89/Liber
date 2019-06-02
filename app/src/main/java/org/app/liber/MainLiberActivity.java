@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -28,15 +29,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 import org.app.liber.Service.LocationService;
 import org.app.liber.activity.MeActivity;
+import org.app.liber.activity.MyProfileActivity;
 import org.app.liber.activity.NotificationActivity;
 import org.app.liber.adapter.ViewPagerAdapter;
+import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.helper.LocationHelper;
+import org.app.liber.helper.ToastUtil;
+import org.app.liber.model.BookshelveDataModel;
+import org.app.liber.pojo.UserPojo;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import de.cketti.mailto.EmailIntentBuilder;
 
 public class MainLiberActivity extends AppCompatActivity implements BookListFragment.OnListFragmentInteractionListener {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private List<UserPojo> lstUserData;
     private ViewPagerAdapter adapter;
     private Toolbar toolbar;
     private AlertDialog.Builder locationAlert;
@@ -47,12 +58,30 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private boolean doubleBackToExitPressedOnce = false;
     private LocationHelper locationHelper;
     private BroadcastReceiver broadcastReceiver;
-    SharedPreferences.Editor sharedPreferencesEditor;
+    private SharedPreferences.Editor sharedPreferencesEditor;
+    private DatabaseHelper databaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_activity);
+        databaseHelper = new DatabaseHelper(getApplicationContext());
         linearLayout = (LinearLayout)findViewById(R.id.activity_main);
+
+        //Temp data
+        UserPojo u = new UserPojo();
+        u.setUname("Prashant");
+        u.setUemail("sandwista@gmail.com");
+        u.setUcity("Hyderabad");
+        u.setUmob("7338239977");
+        u.setUpin("500084");
+        u.setUaddress("Address");
+        u.setUsignupDate("12/06/2016");
+        u.setUlastUpdate("12/06/2016");
+        u.setUdelete("N");
+
+        databaseHelper.addUser(u);
+        setUserData();
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferencesEditor =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
@@ -65,36 +94,41 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
            enableLocation();
        }
 
-        if (!pref.getBoolean(
-                "COMPLETED_ONBOARDING_PREF_NAME", false)) {
+        if (!pref.getBoolean("COMPLETED_ONBOARDING_PREF_NAME", false)) {
             Intent i = new Intent(this, OnboardingActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(i);
             this.finish();
         }
 
+
         sharedPreferencesEditor.putBoolean(
                 "COMPLETED_ONBOARDING_PREF_NAME", true);
+
         sharedPreferencesEditor.apply();
+        sharedPreferencesEditor.putString(
+                "USER_NAME", lstUserData.get(0).getUname());
+        sharedPreferencesEditor.apply();
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_id);
         tabLayout = (TabLayout) findViewById(R.id.tab);
         viewPager = (ViewPager) findViewById(R.id.viewpager_id);
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        locationAlert = new AlertDialog.Builder(MainLiberActivity.this);
-        locationAlert.setTitle("Oops!, We are not yet in your city")
-                .setMessage("We'll come back to you once we are in your city.")
-                .setCancelable(false)
-                .setPositiveButton("Close Liber", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
-                    }
-                });
-
-        AlertDialog alert = locationAlert.create();
-
-//        if(city.equalsIgnoreCase("Hyderabad")){
+//        locationAlert = new AlertDialog.Builder(MainLiberActivity.this);
+//        locationAlert.setTitle("Oops!, We are not yet in your city")
+//                .setMessage("We'll come back to you once we are in your city.")
+//                .setCancelable(false)
+//                .setPositiveButton("Close Liber", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        finish();
+//                    }
+//                });
+//
+//        AlertDialog alert = locationAlert.create();
+//
+//        if(city.toLowerCase().contains("bang")){
 //            alert.show();
 //        }
 
@@ -106,6 +140,27 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    private void setUserData(){
+
+        databaseHelper = new DatabaseHelper(getApplicationContext());
+        Cursor result = databaseHelper.getUserDetails("7338239977");
+        lstUserData = new ArrayList<UserPojo>();
+
+        while (result.moveToNext()){
+            UserPojo userPojo = new UserPojo();
+            userPojo.setUname(result.getString(result.getColumnIndex(result.getColumnName(0).toString())));
+            userPojo.setUemail(result.getString(result.getColumnIndex(result.getColumnName(1).toString())));
+            userPojo.setUcity(result.getString(result.getColumnIndex(result.getColumnName(2).toString())));
+            userPojo.setUmob(result.getString(result.getColumnIndex(result.getColumnName(3).toString())));
+            userPojo.setUpin(result.getString(result.getColumnIndex(result.getColumnName(4).toString())));
+            userPojo.setUaddress(result.getString(result.getColumnIndex(result.getColumnName(5).toString())));
+            userPojo.setUsignupDate(result.getString(result.getColumnIndex(result.getColumnName(6).toString())));
+            userPojo.setUlastUpdate(result.getString(result.getColumnIndex(result.getColumnName(7).toString())));
+            userPojo.setUdelete(result.getString(result.getColumnIndex(result.getColumnName(8).toString())));
+            lstUserData.add(userPojo);
+        }
     }
 
     private boolean runTimePermission() {
@@ -131,7 +186,6 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                     String latitude = loc.substring(loc.indexOf(" "),loc.length());
                     if(longitude != null && latitude != null){
                         city = locationHelper.getLocation(Double.valueOf(latitude), Double.valueOf(longitude));
-                        Toast.makeText(getApplicationContext(), city, Toast.LENGTH_SHORT).show();
                         locationTxt.setText(city);
                         sharedPreferencesEditor.putString("user_location",city.trim());
                         sharedPreferencesEditor.apply();

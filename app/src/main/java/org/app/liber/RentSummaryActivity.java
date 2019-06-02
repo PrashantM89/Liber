@@ -49,6 +49,7 @@ public class RentSummaryActivity extends AppCompatActivity {
     private TextView rentBookDesc;
     private TextView rentBookGenre;
     private TextView rentBookRating;
+    private TextView availableTxt;
     private Button orderSummaryButton;
     private MoreByAuthorAdapter recyclerViewAdapter;
     private ReaderReviewAdapter readerReviewAdapter;
@@ -59,6 +60,8 @@ public class RentSummaryActivity extends AppCompatActivity {
     private LiberEndpointInterface service;
     private ArrayList<UserReview> lst;
     private HorizontalScrollView moreBySameAuthorLayout;
+    private SharedPreferences pref;
+    private String userName;
 
 
     @Override
@@ -75,7 +78,8 @@ public class RentSummaryActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        userName = pref.getString("USER_NAME","Unknown");
         lstOfMoreBooksByThisAuthor = new ArrayList<>();
         recyclerView = (RecyclerView)findViewById(R.id.more_author_book_recyclerview);
         reviewRecyclerView = (RecyclerView)findViewById(R.id.reader_review_recyclerview);
@@ -87,6 +91,7 @@ public class RentSummaryActivity extends AppCompatActivity {
         rentBookDesc = (TextView) findViewById(R.id.bookDescription);
         rentBookGenre = (TextView) findViewById(R.id.rent_summary_book_genre_id);
         rentBookRating = (TextView)findViewById(R.id.rating_id);
+        availableTxt = (TextView)findViewById(R.id.available_id);
         orderSummaryButton = (Button)findViewById(R.id.butSubscribe);
         rentBookDesc.setMovementMethod(new ScrollingMovementMethod());
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
@@ -117,6 +122,11 @@ public class RentSummaryActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerViewAdapter);
 
 
+        if(l.getAvailable().equalsIgnoreCase("Y")){
+            availableTxt.setText("Available for Rent");
+        }else{
+            availableTxt.setText("Someone is Reading");
+        }
         rentBookTitle.setText(l.getTitle());
         rentBookAuthor.setText(l.getAuthor());
         rentBookDesc.setText(l.getDescription());
@@ -124,14 +134,27 @@ public class RentSummaryActivity extends AppCompatActivity {
         rentBookRating.setText(l.getRating());
         Picasso.with(getApplicationContext()).load(l.getCoverImgUrl()).resize(150,200).into(rentBookCover);
         makeTextViewResizable(rentBookDesc, 3, "Read More", true);
-        orderSummaryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), SelectTenureActivity.class);
-                i.putExtra("order_book",l);
-                startActivity(i);
+
+        if(l.getU_id().equalsIgnoreCase(userName)){
+              orderSummaryButton.setVisibility(View.GONE);
+        }else {
+
+            if(l.getAvailable().equalsIgnoreCase("N")){
+                orderSummaryButton.setEnabled(false);
+                orderSummaryButton.setBackgroundColor(getResources().getColor(R.color.black_translucent_20));
+            }else{
+                orderSummaryButton.setEnabled(true);
             }
-        });
+            orderSummaryButton.setVisibility(View.VISIBLE);
+            orderSummaryButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(getApplicationContext(), SelectTenureActivity.class);
+                    i.putExtra("order_book", l);
+                    startActivity(i);
+                }
+            });
+        }
 
 
     }
@@ -236,7 +259,6 @@ public class RentSummaryActivity extends AppCompatActivity {
 
                     if(review.getUbook().toLowerCase().contains(bookName.toLowerCase())){
                         lst.add(review);
-                        System.out.println("------------- "+review.getUreview());
                     }
                 }
 

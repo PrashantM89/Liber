@@ -24,12 +24,34 @@
                 />
 
             <TextView
-                android:id="@+id/textViewTitle1"
+                android:id="@+id/textBookName1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/tx_image_id"
-                android:text="Id :"
+                android:text="Book :"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:id="@+id/textBookName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/textBookName1"
+                android:text="Book Name"
+                android:maxLength="60"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                android:textColor="#000000" />
+
+            <TextView
+                android:id="@+id/textViewTitle1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textBookName"
+                android:layout_marginLeft="5dp"
+                android:layout_toRightOf="@id/tx_image_id"
+                android:text="Order Id :"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 android:textColor="#000000"/>
 
@@ -37,6 +59,7 @@
                 android:id="@+id/textViewTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/textBookName1"
                 android:layout_marginLeft="5dp"
                 android:layout_toRightOf="@id/textViewTitle1"
                 android:text="Transaction Id"
@@ -52,7 +75,7 @@
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/tx_image_id"
-                android:text="Issue date :"
+                android:text="Issue Date :"
                 android:textColor="@color/black"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small" />
 
@@ -77,7 +100,7 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@color/black"
                 android:layout_toRightOf="@id/tx_image_id"
-                android:text="Mode of payment :"
+                android:text="Mode of Payment :"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 />
             <TextView
@@ -89,19 +112,44 @@
                 android:layout_marginTop="5dp"
                 android:textColor="@color/black"
                 android:layout_toRightOf="@id/textViewPrice1"
-                android:text="Mode of transaction"
+                android:text="Mode of Payment"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                  />
 
             <TextView
-                android:id="@+id/txnStatus1"
+                android:id="@+id/txnMobId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textViewPrice1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/black"
+                android:layout_toRightOf="@id/tx_image_id"
+                android:text="Mobile No. :"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                />
+            <TextView
+                android:id="@+id/txnMobId1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/textViewPrice"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
+                android:textColor="@color/black"
+                android:layout_toRightOf="@id/txnMobId"
+                android:text="Mobile"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                />
+
+            <TextView
+                android:id="@+id/txnStatus1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txnMobId"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/tx_image_id"
-                android:text="Status :"
+                android:text="Return Date :"
                 android:textColor="@color/black"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 />
@@ -109,12 +157,37 @@
                 android:id="@+id/txnStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/textViewPrice"
+                android:layout_below="@id/txnMobId1"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_toRightOf="@id/txnStatus1"
-                android:text="Status of transaction"
+                android:text="Return Date"
                 android:textColor="@color/black"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                />
+
+            <TextView
+                android:id="@+id/txnAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txnStatus1"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/black"
+                android:layout_toRightOf="@id/tx_image_id"
+                android:text="Total Amount :"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
+                />
+            <TextView
+                android:id="@+id/txnAmount1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txnStatus"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/black"
+                android:layout_toRightOf="@id/txnAmount"
+                android:text="Amount"
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small"
                 />
 
@@ -122,10 +195,10 @@
                 android:id="@+id/textViewRating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/textViewPrice"
-                android:layout_marginLeft="140dp"
+                android:layout_below="@id/txnStatus"
+                android:layout_marginLeft="135dp"
                 android:layout_marginTop="5dp"
-                android:layout_toRightOf="@id/txnStatus"
+                android:layout_toRightOf="@id/txnAmount1"
                 android:background="@color/colorPrimary"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"

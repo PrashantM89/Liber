@@ -1,86 +1,120 @@
 package org.app.liber.pojo;
 
+import java.io.Serializable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class UserPojo {
 
-    @SerializedName("u_id")
+public class UserPojo implements Serializable
+{
+
+    @SerializedName("uname")
     @Expose
-    private String uId;
-    @SerializedName("u_fname")
+    private String uname;
+    @SerializedName("uemail")
     @Expose
-    private String uFirstName;
-    @SerializedName("u_lname")
+    private String uemail;
+    @SerializedName("umob")
     @Expose
-    private String uLastName;
-    @SerializedName("u_mobile")
+    private String umob;
+    @SerializedName("upin")
     @Expose
-    private String uMobile;
-    @SerializedName("u_email")
+    private String upin;
+    @SerializedName("uaddress")
     @Expose
-    private String uEmail;
-    @SerializedName("u_city")
+    private String uaddress;
+    @SerializedName("usignup_date")
     @Expose
-    private String uCity;
-    @SerializedName("u_address")
+    private String usignupDate;
+    @SerializedName("ulast_update")
     @Expose
-    private String uAddress;
+    private String ulastUpdate;
+    @SerializedName("udelete")
+    @Expose
+    private String udelete;
+    @SerializedName("ucity")
+    @Expose
+    private String ucity;
 
 
-    public String getuId() {
-        return uId;
+
+    private final static long serialVersionUID = -616545887192840793L;
+
+    public String getUcity() {
+        return ucity;
     }
 
-    public void setuId(String uId) {
-        this.uId = uId;
+    public void setUcity(String ucity) {
+        this.ucity = ucity;
     }
 
-    public String getuFirstName() {
-        return uFirstName;
+    public String getUname() {
+        return uname;
     }
 
-    public void setuFirstName(String uFirstName) {
-        this.uFirstName = uFirstName;
+    public void setUname(String uname) {
+        this.uname = uname;
     }
 
-    public String getuLastName() {
-        return uLastName;
+    public String getUemail() {
+        return uemail;
     }
 
-    public void setuLastName(String uLastName) {
-        this.uLastName = uLastName;
+    public void setUemail(String uemail) {
+        this.uemail = uemail;
     }
 
-    public String getuMobile() {
-        return uMobile;
+    public String getUmob() {
+        return umob;
     }
 
-    public void setuMobile(String uMobile) {
-        this.uMobile = uMobile;
+    public void setUmob(String umob) {
+        this.umob = umob;
     }
 
-    public String getuEmail() {
-        return uEmail;
+    public String getUpin() {
+        return upin;
     }
 
-    public void setuEmail(String uEmail) {
-        this.uEmail = uEmail;
+    public void setUpin(String upin) {
+        this.upin = upin;
     }
 
-    public String getuCity() {
-        return uCity;
+    public String getUaddress() {
+        return uaddress;
     }
 
-    public void setuCity(String uCity) {
-        this.uCity = uCity;
+    public void setUaddress(String uaddress) {
+        this.uaddress = uaddress;
     }
 
-    public String getuAddress() {
-        return uAddress;
+    public String getUsignupDate() {
+        return usignupDate;
     }
 
-    public void setuAddress(String uAddress) {
-        this.uAddress = uAddress;
+    public void setUsignupDate(String usignupDate) {
+        this.usignupDate = usignupDate;
     }
+
+    public String getUlastUpdate() {
+        return ulastUpdate;
+    }
+
+    public void setUlastUpdate(String ulastUpdate) {
+        this.ulastUpdate = ulastUpdate;
+    }
+
+    public String getUdelete() {
+        return udelete;
+    }
+
+    public void setUdelete(String udelete) {
+        this.udelete = udelete;
+    }
+
+//    @Override
+//    public String toString() {
+//        return new ToStringBuilder(this).append("uname", uname).append("uemail", uemail).append("umob", umob).append("upin", upin).append("uaddress", uaddress).append("usignupDate", usignupDate).append("ulastUpdate", ulastUpdate).append("udelete", udelete).toString();
+//    }
+
 }

@@ -14,6 +14,7 @@ import org.app.liber.model.Book;
 import org.app.liber.model.BookReviewModel;
 import org.app.liber.model.UserTransactionModel;
 import org.app.liber.model.WalletModel;
+import org.app.liber.pojo.UserPojo;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -62,6 +63,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String REVIEW_SUMMRY = "review_summary";
     private static final String REVIEW_BOOK_NAME = "review_book_name";
 
+    //Usr_tbl
+    private static final String USER_TAB_NAME = "user_tbl";
+    private static final String USER_NAME = "u_name";
+    private static final String USER_EMAIL = "u_email";
+    private static final String USER_CITY = "u_city";
+    private static final String USER_MOB = "u_mob";
+    private static final String USER_PIN = "u_pin";
+    private static final String USER_ADDRESS = "u_address";
+    private static final String USER_SIGNUP_DATE = "u_signup_date";
+    private static final String USER_LAST_UPDATE = "u_last_update";
+    private static final String USER_DELETE = "u_delete";
 
     Context c;
 
@@ -69,6 +81,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null  , 1);
         c = context;
     }
+
+    /*
+    *
+CREATE TABLE IF NOT EXISTS user(
+  u_name VARCHAR(100),
+  u_email VARCHAR(100),
+  u_mob VARCHAR(150),
+  u_pin VARCHAR(10),
+  u_address VARCHAR(100),
+  u_signup_date VARCHAR(12),
+  u_last_update VARCHAR(12),
+  u_delete CHAR
+);  * */
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
@@ -82,6 +107,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(createUsrWltTbl);
         String createReviewTbl = "CREATE TABLE " + REVIEW_TAB_NAME + "(" + REVIEW_NAME + " TEXT," + REVIEW_RATING_STAR + " TEXT," + REVIEW_SUMMRY +" TEXT," + REVIEW_BOOK_NAME + " TEXT)";
         sqLiteDatabase.execSQL(createReviewTbl);
+        String createUserTbl = "CREATE TABLE " + USER_TAB_NAME + "(" + USER_NAME + " TEXT," + USER_EMAIL + " TEXT,"+ USER_CITY + " TEXT," + USER_MOB +" TEXT,"+USER_PIN +" TEXT,"+USER_ADDRESS+" TEXT,"+USER_SIGNUP_DATE +" TEXT,"+USER_LAST_UPDATE +" TEXT,"+USER_DELETE+" TEXT)";
+        sqLiteDatabase.execSQL(createUserTbl);
     }
 
     @Override
@@ -91,7 +118,40 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ USER_TX_TAB_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ USER_WALLET_TAB_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ REVIEW_TAB_NAME);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS "+ USER_TAB_NAME);
         onCreate(sqLiteDatabase);
+    }
+
+    public boolean addUser(UserPojo userPojo){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(USER_NAME, userPojo.getUname());
+        contentValues.put(USER_EMAIL, userPojo.getUemail());
+        contentValues.put(USER_CITY, userPojo.getUcity());
+        contentValues.put(USER_MOB, userPojo.getUmob());
+        contentValues.put(USER_PIN, userPojo.getUpin());
+        contentValues.put(USER_ADDRESS, userPojo.getUaddress());
+        contentValues.put(USER_SIGNUP_DATE, userPojo.getUsignupDate());
+        contentValues.put(USER_LAST_UPDATE, userPojo.getUlastUpdate());
+        contentValues.put(USER_DELETE, userPojo.getUdelete());
+
+        long result = sqLiteDatabase.insert(USER_TAB_NAME, null, contentValues);
+        if(result == -1){
+            Toast.makeText(c, "Your detail couldn't be added. Try again.",Toast.LENGTH_SHORT).show();
+            return false;
+        }else{
+            Toast.makeText(c, "Your detail is saved.",Toast.LENGTH_SHORT).show();
+            return true;
+        }
+    }
+
+    public Cursor getUserDetails(String mob){
+        SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
+
+        String query = "SELECT * FROM "+USER_TAB_NAME+" WHERE u_mob = "+mob;
+        Cursor data = sqLiteDatabase.rawQuery(query,null);
+
+        return data;
     }
 
     public boolean addReview(BookReviewModel review){
@@ -278,7 +338,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             totalAmnt = c.getInt(c.getColumnIndex("total"));
         }
 
-        System.out.println("Wallet Total "+totalAmnt);
         return totalAmnt;
     }
 }

@@ -58,7 +58,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
         String authorsString = "by " + mValues.get(position).authors;
         holder.mAuthorsView.setText(authorsString);
         String smallThumbnailLink = mValues.get(position).smallThumbnailLink;
-        Picasso.with(mContext).load(smallThumbnailLink).resize(90,90).into(holder.mBookCoverView);
+        Picasso.with(mContext).load(smallThumbnailLink).into(holder.mBookCoverView);
 
     }
 
@@ -104,22 +104,20 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
                     book.setDescription(mValues.get(getPosition()).description);
                     book.setGenre(mValues.get(getPosition()).genre);
                     book.setRating(mValues.get(getPosition()).avgRating);
+                    book.setAvailable("Y");
 
-                    Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertBookInBookshelf(book,"Sandwista");
+                    Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertBookInBookshelf(book,"Prashant");
 
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             progressDialog.dismiss();
-                            System.out.println("---------------------- "+call.request().url());
                             Toast.makeText(mContext,"Book Uploaded",Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void onFailure(Call<ResponseBody> call, Throwable t) {
                             progressDialog.dismiss();
-                            System.out.println("---------------------- "+t.getMessage());
-                            System.out.println("---------------------- "+call.request().url());
                             Toast.makeText(mContext,"Failed uploading book : "+t.getMessage(),Toast.LENGTH_SHORT).show();
                         }
                     });

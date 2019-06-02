@@ -1,6 +1,6 @@
 package org.app.liber;
 
-import android.database.Cursor;
+import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,15 +10,21 @@ import android.view.View;
 
 import org.app.liber.adapter.TransactionAdapter;
 import org.app.liber.helper.DatabaseHelper;
-import org.app.liber.model.UserTransactionModel;
+import org.app.liber.pojo.TransactionPojo;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class TransactionList extends AppCompatActivity {
 
     private RecyclerView recyclerView;
-    List<UserTransactionModel> lstUserTxn;
+    private ProgressDialog progressDialog;
+    private LiberEndpointInterface service;
+    List<TransactionPojo> lstUserTxn;
     DatabaseHelper databaseHelper;
     TransactionAdapter recyclerViewAdapter;
 
@@ -35,31 +41,56 @@ public class TransactionList extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
+        service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
         recyclerView = (RecyclerView)findViewById(R.id.tx_recycler_id);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        progressDialog = new ProgressDialog(getApplicationContext());
+        progressDialog.setMessage(getApplicationContext().getString(R.string.processing_txn_label));
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
         addUserTransactionFromDB();
     }
 
     public void addUserTransactionFromDB(){
-        databaseHelper = new DatabaseHelper(getApplicationContext());
-        Cursor result = databaseHelper.getTxData();
+
         lstUserTxn = new ArrayList<>();
-        while (result.moveToNext()){
-            UserTransactionModel b = new UserTransactionModel();
-            b.setTxId(result.getString(result.getColumnIndex(result.getColumnName(0).toString())));
-            b.setTxDate(result.getString(result.getColumnIndex(result.getColumnName(1).toString())));
-            b.setTxStatus(result.getString(result.getColumnIndex(result.getColumnName(2).toString())));
-            b.setTxMode(result.getString(result.getColumnIndex(result.getColumnName(3).toString())));
-            b.setDeliveryStatus(result.getString(result.getColumnIndex(result.getColumnName(4).toString())));
 
-            lstUserTxn.add(b);
-        }
+        Call<ArrayList<TransactionPojo>> call = service.getAllUserTxns("7338239977");
+        call.enqueue(new Callback<ArrayList<TransactionPojo>>() {
+            @Override
+            public void onResponse(Call<ArrayList<TransactionPojo>> call, Response<ArrayList<TransactionPojo>> response) {
 
-        recyclerViewAdapter = new TransactionAdapter(getApplicationContext(),lstUserTxn);
-        recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerViewAdapter.notifyDataSetChanged();
+                if(response.code() == 200){
+                    progressDialog.dismiss();
+                    //errorLayout.setVisibility(View.GONE);
+                    recyclerViewAdapter = new TransactionAdapter(getApplicationContext(),lstUserTxn = response.body());
+                    recyclerView.setAdapter(recyclerViewAdapter);
+                    recyclerViewAdapter.notifyDataSetChanged();
+                }else{
+                    progressDialog.dismiss();
+                    //errorLayout.setVisibility(View.VISIBLE);
+
+//                    tap2Refresh.setOnClickListener(new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            loadLibraryData();
+//                        }
+//                    });
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<TransactionPojo>> call, Throwable t) {
+                progressDialog.dismiss();
+//                errorLayout.setVisibility(View.VISIBLE);
+//                tap2Refresh.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        loadLibraryData();
+//                    }
+//                });
+            }
+        });
     }
 }

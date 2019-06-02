@@ -7,18 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import org.app.liber.R;
-import org.app.liber.model.UserTransactionModel;
-
+import org.app.liber.pojo.TransactionPojo;
 import java.util.List;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactioViewHolder> {
 
     private Context context;
-    private List<UserTransactionModel> lstUsrTx;
+    private List<TransactionPojo> lstUsrTx;
 
-    public TransactionAdapter(Context context, List<UserTransactionModel> lstUsrTx) {
+    public TransactionAdapter(Context context, List<TransactionPojo> lstUsrTx) {
         this.context = context;
         this.lstUsrTx = lstUsrTx;
     }
@@ -33,14 +31,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
     @Override
     public void onBindViewHolder(TransactioViewHolder holder, int position) {
 
-        UserTransactionModel model = lstUsrTx.get(position);
+        TransactionPojo model = lstUsrTx.get(position);
 
         holder.txnId.setText(model.getTxId());
         holder.txnDate.setText(model.getTxDate());
-        holder.txnStatus.setText(model.getTxStatus());
-        holder.txnMode.setText(model.getTxMode());
-        holder.txnDeliveryStatus.setText(model.getDeliveryStatus());
-
+        holder.txReturndate.setText(model.getTxReturnDate());
+        holder.txnMode.setText(model.getTxPaymentMode());
+        holder.txnDeliveryStatus.setText(model.getTxDeliverySts());
+        holder.txAmnt.setText(model.getTxAmount());
+        holder.txMob.setText(model.getTxMob());
+        holder.txBookName.setText(model.getTxBook());
     }
 
     @Override
@@ -50,16 +50,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
 
     class TransactioViewHolder extends RecyclerView.ViewHolder{
 
-        TextView txnId, txnDate, txnStatus, txnMode, txnDeliveryStatus;
-        ImageView img;
+        TextView txnId, txnDate, txnStatus, txnMode, txnDeliveryStatus, txAmnt, txMob, txReturndate, txBookName;
 
         public TransactioViewHolder(View itemView) {
             super(itemView);
             txnId  = (TextView)itemView.findViewById(R.id.textViewTitle);
             txnDate = (TextView)itemView.findViewById(R.id.textViewShortDesc);
-            txnStatus = (TextView)itemView.findViewById(R.id.txnStatus);
+            txReturndate = (TextView)itemView.findViewById(R.id.txnStatus);
             txnMode = (TextView)itemView.findViewById(R.id.textViewPrice);
             txnDeliveryStatus = (TextView)itemView.findViewById(R.id.textViewRating);
+            txAmnt = (TextView)itemView.findViewById(R.id.txnAmount1);
+            txMob = (TextView)itemView.findViewById(R.id.txnMobId1);
+            txBookName = (TextView)itemView.findViewById(R.id.textBookName);
         }
     }
 }

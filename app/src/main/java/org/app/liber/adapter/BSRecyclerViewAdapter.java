@@ -19,22 +19,22 @@ import com.squareup.picasso.Picasso;
 import org.app.liber.BookShelfItemExpandActivity;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.R;
-import org.app.liber.model.BookshelveDataModel;
+import org.app.liber.pojo.BookshelfPojo;
 
 import java.util.List;
 
 public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAdapter.MyViewHolder> {
 
     Context context;
-    List<BookshelveDataModel> lstBSBooks;
+    List<BookshelfPojo> lstBSBooks;
     DatabaseHelper db;
 
-    public BSRecyclerViewAdapter(Context context, List<BookshelveDataModel> lstBSBooks) {
+    public BSRecyclerViewAdapter(Context context, List<BookshelfPojo> lstBSBooks) {
         this.context = context;
         this.lstBSBooks = lstBSBooks;
     }
 
-    public void setLstBSBooks(List<BookshelveDataModel> lstBSBooks) {
+    public void setLstBSBooks(List<BookshelfPojo> lstBSBooks) {
         this.lstBSBooks = lstBSBooks;
     }
 
@@ -50,8 +50,8 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
     @Override
     public void onBindViewHolder(final BSRecyclerViewAdapter.MyViewHolder myViewHolder, final int i) {
         myViewHolder.tvBookName.setText(lstBSBooks.get(i).getTitle());
-        myViewHolder.tvAuthor.setText(lstBSBooks.get(i).getAuthors());
-        Picasso.with(context).load(lstBSBooks.get(i).getSmallThumbnailLink()).into(myViewHolder.ivCover);
+        myViewHolder.tvAuthor.setText(lstBSBooks.get(i).getAuthor());
+        Picasso.with(context).load(lstBSBooks.get(i).getCoverImgUrl()).into(myViewHolder.ivCover);
 
 
         myViewHolder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
@@ -71,9 +71,9 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), BookShelfItemExpandActivity.class);
                 int position = myViewHolder.getAdapterPosition();
-                BookshelveDataModel b = new BookshelveDataModel();
+                BookshelfPojo b = new BookshelfPojo();
                 b.setTitle(lstBSBooks.get(position).getTitle());
-                b.setSmallThumbnailLink(lstBSBooks.get(position).getSmallThumbnailLink());
+                b.setCoverImgUrl(lstBSBooks.get(position).getCoverImgUrl());
 //                b.setIsAvailable(lstBSBooks.get(position).getIsAvailable());
 //                b.setDueDate(lstBSBooks.get(position).getDueDate());
                 intent.putExtra("bookshelfBooks",  b);
@@ -120,14 +120,14 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
     }
 
     public void removeItem(int position) {
-        final BookshelveDataModel model = lstBSBooks.remove(position);
+        final BookshelfPojo model = lstBSBooks.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position,lstBSBooks.size());
         //return model;
     }
 
 
-    private void removeDataFromList(BookshelveDataModel data){
+    private void removeDataFromList(BookshelfPojo data){
         int currentPosition = lstBSBooks.indexOf(data);
         lstBSBooks.remove(currentPosition);
         notifyItemRemoved(currentPosition);

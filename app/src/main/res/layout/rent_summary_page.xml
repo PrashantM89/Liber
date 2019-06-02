@@ -132,7 +132,7 @@
             android:ellipsize="end"
             android:lines="1"
             android:textColor="#ff0000"
-            android:text="Available for rent"
+            android:text="Availability"
             android:textSize="14sp"
             android:textStyle="bold"
             android:paddingRight="5dp"
@@ -159,7 +159,8 @@
                 android:textAlignment="center"
                 android:layout_alignParentBottom="true"
                 android:text="@string/rent_it_label"
-                android:textAllCaps="false"/>
+                android:textAllCaps="false"
+                android:visibility="visible"/>
         </LinearLayout>
 
         <LinearLayout

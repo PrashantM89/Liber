@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -92,6 +93,18 @@ public class MyProfileActivity extends AppCompatActivity{
         email = (EditText) findViewById(R.id.emailid_name);
         address = (TextView) findViewById(R.id.address_name);
 
+
+        firstName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    if(firstName.getText().equals("") || firstName == null){
+                        ToastUtil.showToast(getApplicationContext(),"First name can be empty.");
+                        firstName.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+                    }
+                }
+            }
+        });
 
         saveProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override

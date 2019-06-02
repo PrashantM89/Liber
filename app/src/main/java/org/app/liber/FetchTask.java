@@ -77,7 +77,6 @@ class FetchTask extends AsyncTask<String,Void , ArrayList<Book>> {
                         bookDescription = bookVolumeInfo.getString("description");
                         genre = bookVolumeInfo.getJSONArray("categories").getString(0);
                         avgRating = bookVolumeInfo.getString("averageRating");
-                        System.out.println("Book Genre ========================"+genre);
                     }catch (JSONException ignored){}
                     //------------------------------------------------------------------------------
                     // AUTHORS
