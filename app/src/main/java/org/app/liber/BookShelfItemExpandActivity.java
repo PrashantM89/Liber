@@ -12,7 +12,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
-import org.app.liber.model.BookshelveDataModel;
+import org.app.liber.pojo.BookshelfPojo;
 import org.app.liber.pojo.UserReview;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -53,9 +53,9 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
 //        BookDuedate = (TextView)findViewById(R.id.expand_book_duedate_id);
         i = getIntent();
 
-        BookshelveDataModel b = (BookshelveDataModel) i.getSerializableExtra("bookshelfBooks");
+        BookshelfPojo b = (BookshelfPojo) i.getSerializableExtra("bookshelfBooks");
 
-        Picasso.with(getApplicationContext()).load(b.getSmallThumbnailLink()).into(img);
+        Picasso.with(getApplicationContext()).load(b.getCoverImgUrl()).into(img);
         bookname.setText(b.getTitle());
 //        if(b.getIsAvailable().equals("Y")){
 //            bookAvailable.setText("Available");

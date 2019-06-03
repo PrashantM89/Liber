@@ -171,8 +171,10 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setTxMob("7338239977");
                     usrTx.setTxDeliveryDate(formattedDate);
                     usrTx.setTxType("Renter");
-                    usrTx.setTxUser("Sandwista");
+                    usrTx.setTxUser("Prashant");
                     usrTx.setTxReturnDate(returnDateTxt.getText().toString());
+                    usrTx.setTxBook(orderTitle.getText().toString());
+                    usrTx.setTxBookOwner(l.getU_id());
                     saveTxn(usrTx);
                     startActivity(j);
             }

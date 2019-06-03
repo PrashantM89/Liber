@@ -68,7 +68,6 @@ public class BookshelveFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView)v.findViewById(R.id.bookshelve_recyclerview);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
     }
 
     @Override

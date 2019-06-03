@@ -37,13 +37,13 @@
             android:textStyle="bold"
             android:maxLength="40"
             />
-        <TextView
-            android:id="@+id/bookshelve_authors"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceListItem"
-            android:textColor="@color/book_list_authors"
-            android:maxLength="20"/>
+        <!--<TextView-->
+            <!--android:id="@+id/bookshelve_authors"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?attr/textAppearanceListItem"-->
+            <!--android:textColor="@color/book_list_authors"-->
+            <!--android:maxLength="20"/>-->
         <TextView
             android:id="@+id/bookshelve_availability_txt_id"
             android:layout_gravity="center_vertical"

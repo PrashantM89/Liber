@@ -162,13 +162,21 @@
                 android:textAllCaps="false"
                 android:visibility="visible"/>
         </LinearLayout>
+        <LinearLayout
+            android:id="@+id/horizontal_line_id"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_below="@+id/rent_bttn_layout_id">
+            <include layout="@layout/horizontal_divider"/>
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/book_desc_layout_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_below="@+id/rent_bttn_layout_id">
+            android:layout_below="@+id/horizontal_line_id">
 
             <TextView
                 android:id="@+id/bookDescription"

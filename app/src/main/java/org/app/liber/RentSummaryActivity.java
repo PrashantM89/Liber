@@ -122,10 +122,14 @@ public class RentSummaryActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerViewAdapter);
 
 
-        if(l.getAvailable().equalsIgnoreCase("Y")){
+        if("Y".equalsIgnoreCase(l.getAvailable())){
             availableTxt.setText("Available for Rent");
         }else{
-            availableTxt.setText("Someone is Reading");
+            if(userName.equalsIgnoreCase(l.getReader())){
+                availableTxt.setText("You are Reading");
+            }else{
+                availableTxt.setText("Someone is Reading");
+            }
         }
         rentBookTitle.setText(l.getTitle());
         rentBookAuthor.setText(l.getAuthor());

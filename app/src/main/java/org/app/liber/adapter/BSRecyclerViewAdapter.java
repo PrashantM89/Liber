@@ -50,7 +50,13 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
     @Override
     public void onBindViewHolder(final BSRecyclerViewAdapter.MyViewHolder myViewHolder, final int i) {
         myViewHolder.tvBookName.setText(lstBSBooks.get(i).getTitle());
-        myViewHolder.tvAuthor.setText(lstBSBooks.get(i).getAuthor());
+       // myViewHolder.tvAuthor.setText(lstBSBooks.get(i).getAuthor());
+        if("Y".equalsIgnoreCase(lstBSBooks.get(i).getAvailable())){
+            myViewHolder.tvAvailibility.setText("With you");
+        }else{
+
+            myViewHolder.tvAvailibility.setText("Reader:"+lstBSBooks.get(i).getReader());
+        }
         Picasso.with(context).load(lstBSBooks.get(i).getCoverImgUrl()).into(myViewHolder.ivCover);
 
 
@@ -74,15 +80,9 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
                 BookshelfPojo b = new BookshelfPojo();
                 b.setTitle(lstBSBooks.get(position).getTitle());
                 b.setCoverImgUrl(lstBSBooks.get(position).getCoverImgUrl());
-//                b.setIsAvailable(lstBSBooks.get(position).getIsAvailable());
-//                b.setDueDate(lstBSBooks.get(position).getDueDate());
+                b.setAvailable(lstBSBooks.get(position).getAvailable());
+//              b.setDueDate(lstBSBooks.get(position).getDueDate());
                 intent.putExtra("bookshelfBooks",  b);
-
-//                Pair[] pairs = new Pair[4];
-//                pairs[0] = new Pair<View, String>(myViewHolder.ivCover,"bookCoverTN");
-//                pairs[1] = new Pair<View, String>(myViewHolder.tvBookName,"bookTitleTN");
-//                pairs[2] = new Pair<View, String>(myViewHolder.tvBookAvailStatus,"bookAvailableTN");
-//                pairs[3] = new Pair<View, String>(myViewHolder.tvBookDueDate,"duedateTN");
 
                   context.startActivity(intent);
 //                ActivityOptions options = (ActivityOptions) ActivityOptions.makeSceneTransitionAnimation((Activity) context,pairs);
@@ -123,7 +123,6 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
         final BookshelfPojo model = lstBSBooks.remove(position);
         notifyItemRemoved(position);
         notifyItemRangeChanged(position,lstBSBooks.size());
-        //return model;
     }
 
 
@@ -142,7 +141,9 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         private TextView tvBookName;
-        private TextView tvAuthor;
+       // private TextView tvAuthor;
+        private TextView tvAvailibility;
+        //private TextView tvDueDate;
         private ImageView ivCover;
 
 
@@ -150,7 +151,9 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
             super(itemView);
 
             tvBookName = (TextView)itemView.findViewById(R.id.bookshelve_title);
-            tvAuthor = (TextView)itemView.findViewById(R.id.bookshelve_authors);
+            //tvAuthor = (TextView)itemView.findViewById(R.id.bookshelve_authors);
+            tvAvailibility = (TextView)itemView.findViewById(R.id.bookshelve_availability_txt_id);
+          //  tvDueDate = (TextView)itemView.findViewById(R.id.bookshelve_duedate_txt_id);
             ivCover = (ImageView)itemView.findViewById(R.id.bookshelve_book_cover);
 
         }
