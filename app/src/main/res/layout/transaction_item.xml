@@ -206,6 +206,21 @@
                 android:textAppearance="@style/Base.TextAppearance.AppCompat.Small.Inverse"
                 android:textColor="@color/highlight"
                 android:textStyle="bold" />
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_below="@id/textViewRating"
+                app:cardBackgroundColor="@color/white">
+                <Button
+                    android:id="@+id/textHelpId"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
+                    android:text="Need Help?"
+                    android:textColor="@color/white"
+                    android:background="@color/primary_500"/>
+            </android.support.v7.widget.CardView>
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

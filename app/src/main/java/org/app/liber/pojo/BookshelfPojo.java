@@ -34,6 +34,26 @@ public class BookshelfPojo implements Serializable {
     @SerializedName("reader")
     @Expose
     private String reader;
+    @SerializedName("dor")
+    @Expose
+    private String dor;
+    @SerializedName("delete")
+    @Expose
+    private String delete;
+
+    public String getDor() {
+        return dor;
+    }
+
+    public void setDor(String dor) {
+        this.dor = dor;
+    }
+
+    public String getDelete() {
+        return delete;
+    }
+
+    public void setDelete(String delete) { this.delete = delete; }
 
     public String getReader() {
         return reader;

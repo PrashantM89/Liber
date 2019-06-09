@@ -25,7 +25,6 @@ import org.app.liber.helper.ToastUtil;
 import org.app.liber.pojo.BookshelfPojo;
 import java.util.ArrayList;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -88,7 +87,6 @@ public class BookshelveFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-
     }
 
     private void loadDataFromDB(){

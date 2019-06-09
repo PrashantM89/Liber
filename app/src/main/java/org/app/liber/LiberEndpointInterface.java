@@ -4,6 +4,7 @@ import org.app.liber.pojo.BookshelfPojo;
 import org.app.liber.pojo.TransactionPojo;
 import org.app.liber.pojo.UserPojo;
 import org.app.liber.pojo.UserReview;
+import org.app.liber.pojo.WalletPojo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,18 @@ import retrofit2.http.Query;
 
 public interface LiberEndpointInterface {
 
+    //notifications
+//    @GET("bookshelf/userNotifications")
+//    Call<ArrayList<>> getUserNotification();
+
+    //wallet
+    @GET("wallet/userWaller")
+    Call<ArrayList<WalletPojo>> getUserWalletData(@Query("wmob")String wmob);
+
+    @POST("wallet/addMoney")
+    Call<ResponseBody> insertMoneyInToWallet(@Body WalletPojo walletPojo);
+
+    //bookshelf
     @GET("bookshelf/books")
     Call<ArrayList<BookshelfPojo>> getBooks();
 
@@ -30,13 +43,15 @@ public interface LiberEndpointInterface {
     @GET("bookshelf/userBooks")
     Call<ArrayList<BookshelfPojo>> getUserBooks(@Query("u_id")String u_id);
 
+    @POST("bookshelf/deleteBook")
+    Call<ArrayList<BookshelfPojo>> deleteBook(@Body BookshelfPojo bookshelfPojo);
+
     //Reviews
     @GET("review/reviews")
     Call<ArrayList<UserReview>> getUserReviews();
 
     @POST("review/uploadReview")
     Call<ResponseBody> insertUserReviewOnABook(@Body UserReview userReview);
-
 
     //Txn
     @GET("txn/transactions")

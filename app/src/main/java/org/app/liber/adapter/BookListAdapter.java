@@ -2,6 +2,8 @@ package org.app.liber.adapter;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +19,15 @@ import org.app.liber.LiberApiBase;
 import org.app.liber.LiberEndpointInterface;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.R;
+import org.app.liber.helper.DateUtil;
 import org.app.liber.helper.WalletTxn;
 import org.app.liber.model.Book;
 import org.app.liber.model.WalletModel;
 import org.app.liber.pojo.BookshelfPojo;
+import org.app.liber.pojo.WalletPojo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import okhttp3.ResponseBody;
@@ -35,9 +40,12 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     private static final String LOG_TAG = BookListAdapter.class.getSimpleName();
     private final ArrayList<Book> mValues;
     private final Context mContext;
-    WalletTxn txn;
-    DatabaseHelper databaseHelper;
-    ProgressDialog progressDialog;
+    private WalletTxn txn;
+    private DatabaseHelper databaseHelper;
+    private ProgressDialog progressDialog;
+    private SharedPreferences pref;
+    private String userName;
+    private String userMob;
 
     public BookListAdapter(ArrayList<Book> items, Context context) {
         mValues = items;
@@ -48,6 +56,9 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_booklist, parent, false);
+        pref = PreferenceManager.getDefaultSharedPreferences(mContext);
+        userName = pref.getString("USER_NAME","Unknown");
+        userMob = pref.getString("USER_MOB","Unknown");
         return new ViewHolder(view);
     }
 
@@ -105,8 +116,10 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
                     book.setGenre(mValues.get(getPosition()).genre);
                     book.setRating(mValues.get(getPosition()).avgRating);
                     book.setAvailable("Y");
+                    book.setDelete("N");
+                    book.setU_id(userName);
 
-                    Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertBookInBookshelf(book,"Prashant");
+                    Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertBookInBookshelf(book,book.getU_id());
 
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
@@ -122,16 +135,38 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
                         }
                     });
 
-
-                    addPointsInWallet();
+                    addPointsInWallet(book);
                 }
             });
         }
     }
 
-    private void addPointsInWallet() {
-        txn = new WalletTxn(databaseHelper);
-        WalletModel model = new WalletModel(3,"7338239977",new Date().toString());
-        txn.addToWallet(model);
+    private void addPointsInWallet(BookshelfPojo b) {
+
+        WalletPojo money = new WalletPojo();
+        money.setWuid(b.getU_id());
+        money.setWmob(userMob);
+        money.setWamntAdded("3");
+        money.setWbookDate(DateUtil.getDate(Calendar.getInstance().getTime()));
+        money.setWdelete("N");
+        money.setWbookName(b.getTitle());
+
+
+        Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertMoneyInToWallet(money);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                progressDialog.dismiss();
+                Toast.makeText(mContext,"Wallet Updated",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(mContext,"Failed updating wallet : "+t.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

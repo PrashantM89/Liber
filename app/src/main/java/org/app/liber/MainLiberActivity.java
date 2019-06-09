@@ -108,6 +108,8 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         sharedPreferencesEditor.apply();
         sharedPreferencesEditor.putString(
                 "USER_NAME", lstUserData.get(0).getUname());
+        sharedPreferencesEditor.putString(
+                "USER_MOB", lstUserData.get(0).getUmob());
         sharedPreferencesEditor.apply();
 
 
