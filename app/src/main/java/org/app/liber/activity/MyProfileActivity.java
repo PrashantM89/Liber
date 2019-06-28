@@ -16,10 +16,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.Places;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
-import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.libraries.places.api.model.Place;
 
 import org.app.liber.R;
 import org.app.liber.fragment.ProfileInputDialogFragment;
@@ -41,18 +38,6 @@ public class MyProfileActivity extends AppCompatActivity{
 
     private Button saveProfileBtn;
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode == 1){
-            if(resultCode == RESULT_OK){
-                //Place place = PlacePicker.getPlace(this, data);
-                Place place = PlaceAutocomplete.getPlace(this, data);
-                address.setText(String.format("%s",place.getAddress()));
-            }
-        }
-    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,20 +53,9 @@ public class MyProfileActivity extends AppCompatActivity{
         mAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
 
-                try {
-//                    Intent intent = (Intent) builder.build(MyProfileActivity.this);
-//                    startActivityForResult(intent,1);
 
-                    Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
-                            .build(MyProfileActivity.this);
-                    startActivityForResult(intent,1);
-                } catch (GooglePlayServicesRepairableException e) {
-                    e.printStackTrace();
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    e.printStackTrace();
-                }
+
             }
         });
 

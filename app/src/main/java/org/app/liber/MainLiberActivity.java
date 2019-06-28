@@ -60,6 +60,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private BroadcastReceiver broadcastReceiver;
     private SharedPreferences.Editor sharedPreferencesEditor;
     private DatabaseHelper databaseHelper;
+    private String shareCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -246,6 +247,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                 startActivity(new Intent(getApplicationContext(), MeActivity.class));
                 break;
             case R.id.share_id:
+                shareCode = generateShareCode();
                 Intent intentShare = new Intent("android.intent.action.SEND");
                 intentShare.setType("text/plain");
                 intentShare.putExtra("android.intent.extra.TEXT", "Share Liber app among your fellow readers and earn by sharing.");
@@ -274,6 +276,11 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private String generateShareCode() {
+
+        return null;
     }
 
     public void addBookAgainToShelf(View v) {

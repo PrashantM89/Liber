@@ -17,6 +17,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
+import org.app.liber.activity.RegistrationActivity;
 import org.app.liber.helper.DatabaseHelper;
 
 public class SplashActivity extends AppCompatActivity {
@@ -54,7 +55,8 @@ public class SplashActivity extends AppCompatActivity {
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Exception {
-                        Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
+             //           Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
+                        Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
                         SplashActivity.this.startActivity(intent);
                         SplashActivity.this.finish();
                     }
