@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ProgressBar;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import io.reactivex.Completable;
 import io.reactivex.CompletableEmitter;
 import io.reactivex.CompletableOnSubscribe;
@@ -17,6 +19,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Action;
 import io.reactivex.schedulers.Schedulers;
 
+import org.app.liber.activity.LoginActivity;
 import org.app.liber.activity.RegistrationActivity;
 import org.app.liber.helper.DatabaseHelper;
 
@@ -55,12 +58,34 @@ public class SplashActivity extends AppCompatActivity {
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Exception {
-             //           Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
-                        Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
-                        SplashActivity.this.startActivity(intent);
-                        SplashActivity.this.finish();
+
+                        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+                            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+
+                        }else{
+                            Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
+                            //   Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
+                            SplashActivity.this.startActivity(intent);
+                            SplashActivity.this.finish();
+                        }
+
                     }
                 });
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(FirebaseAuth.getInstance().getCurrentUser() == null){
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+
+        }
     }
 }

@@ -1,6 +1,8 @@
 package org.app.liber;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.app.liber.activity.RegistrationActivity;
 import org.app.liber.adapter.SlideAdapter;
 
 public class OnboardingActivity extends AppCompatActivity {
@@ -21,12 +24,17 @@ public class OnboardingActivity extends AppCompatActivity {
     private Button button;
     private TextView[] dots;
     int currentPage;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor sharedPreferencesEditor;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding);
+
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
         button =(Button)findViewById(R.id.got_it_id);
         slideViewPager = (ViewPager)findViewById(R.id.slideViePagerId);
@@ -39,7 +47,10 @@ public class OnboardingActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), MainLiberActivity.class));
+                Intent i = new Intent(getApplicationContext(), RegistrationActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+                startActivity(i);
+                finish();
             }
         });
     }

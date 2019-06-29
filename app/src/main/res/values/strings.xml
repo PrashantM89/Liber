@@ -27,6 +27,10 @@
         <item>2</item>
         <item>4</item>
     </string-array>
+    <string name="otp_verify_title1">Enter OTP Code</string>
+    <string name="otp_verify_title2">Please type the verification code sent to +91 </string>
+    <string name="otp_title1">Enter your mobile number</string>
+    <string name="otp_title2">Tap Next to verify your account with your phone number. We will send a One Time SMS to this number.</string>
     <string name="order_complete">Order placed</string>
     <string name="wallet_amount">10</string>
     <string name="wallet_chckbox_str"> Use Liber wallet money.</string>
@@ -37,6 +41,7 @@
     <string name="wallet_subtitle">Get your books to work. Upload them on Liber and earn ₹3 on every book upload and more on rental.</string>
     <string name="order_subtitle">Book will be delivered to you by tomorrow. Our executive will contact you soon for delivery. Check order summary to track your order.</string>
     <string name="processing_label">Loading...</string>
+    <string name="register_label">Saving Details...</string>
     <string name="wallet_processing_label">Loading Wallet...</string>
     <string name="wallet_amount_per_book">3</string>
     <string name="processing_txn_label">Processing..</string>
@@ -71,6 +76,7 @@
     <string name="no_network_message">There is no network available</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
-    <string name="api_key">XXXXXXXXXXXXXXXXXXX</string>
+    <string name="api_key">AIzaSyDZAU8Mgv6BxcSxtyV98G_X0FpsMS4MnbQ</string>
     <string name="place_details">&lt;b&gt;%1$s&lt;/b&gt;&lt;br/&gt;&lt;i&gt;Place Id: %2$s&lt;/i&gt;&lt;br/&gt;Address: %3$s&lt;br/&gt;Phone: %4$s&lt;br/&gt;Website: %5$s</string>
+    <string name="title_activity_otpverification">OTPVerification</string>
 </resources>

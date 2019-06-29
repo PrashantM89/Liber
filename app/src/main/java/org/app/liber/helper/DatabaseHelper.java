@@ -145,10 +145,11 @@ CREATE TABLE IF NOT EXISTS user(
         }
     }
 
-    public Cursor getUserDetails(String mob){
+    public Cursor getUserDetails(){
         SQLiteDatabase sqLiteDatabase = this.getWritableDatabase();
 
-        String query = "SELECT * FROM "+USER_TAB_NAME+" WHERE u_mob = "+mob;
+        String query = "SELECT * FROM "+USER_TAB_NAME+
+                " ORDER BY "+USER_LAST_UPDATE + " DESC";
         Cursor data = sqLiteDatabase.rawQuery(query,null);
 
         return data;

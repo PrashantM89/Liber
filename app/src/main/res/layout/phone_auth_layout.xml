@@ -24,6 +24,7 @@
         android:orientation="vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp" >
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/signup_input_layout_name"
             android:layout_width="match_parent"
@@ -56,28 +57,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp">
+                android:layout_marginTop="10dp"
+                >
                 <EditText
                     android:id="@+id/signup_input_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Address"
+                    android:hint="Tap to search address"
                     />
             </android.support.design.widget.TextInputLayout>
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/signup_input_layout_pin"
+            android:id="@+id/signup_input_layout_add2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp">
             <EditText
-                android:id="@+id/signup_input_pin"
+                android:id="@+id/signup_input_add2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Address Line 2"
                 />
         </android.support.design.widget.TextInputLayout>
-        <Button android:id="@+id/btn_signup"
+        <Button android:id="@+id/btn_save_usr_id"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Save"
@@ -91,4 +93,15 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:src="@drawable/places_powered_by_google_light"/>
+    <ProgressBar
+        android:id="@+id/userRegProgressBarId"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/colorAccent"
+        android:visibility="gone"
+        android:layout_centerInParent="true"
+        android:indeterminateTintMode="src_atop"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
 </LinearLayout>

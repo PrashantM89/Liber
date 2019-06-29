@@ -31,6 +31,7 @@ import org.app.liber.Service.LocationService;
 import org.app.liber.activity.MeActivity;
 import org.app.liber.activity.MyProfileActivity;
 import org.app.liber.activity.NotificationActivity;
+import org.app.liber.activity.RegistrationActivity;
 import org.app.liber.adapter.ViewPagerAdapter;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.helper.LocationHelper;
@@ -50,7 +51,6 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private List<UserPojo> lstUserData;
     private ViewPagerAdapter adapter;
     private Toolbar toolbar;
-    private AlertDialog.Builder locationAlert;
     private TextView locationTxt;
     private LinearLayout linearLayout;
     private String city;
@@ -69,20 +69,6 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         databaseHelper = new DatabaseHelper(getApplicationContext());
         linearLayout = (LinearLayout)findViewById(R.id.activity_main);
 
-        //Temp data
-        UserPojo u = new UserPojo();
-        u.setUname("Prashant");
-        u.setUemail("sandwista@gmail.com");
-        u.setUcity("Hyderabad");
-        u.setUmob("7338239977");
-        u.setUpin("500084");
-        u.setUaddress("Address");
-        u.setUsignupDate("12/06/2016");
-        u.setUlastUpdate("12/06/2016");
-        u.setUdelete("N");
-
-        databaseHelper.addUser(u);
-        setUserData();
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferencesEditor =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
@@ -103,37 +89,23 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         }
 
 
+        getUserNameFromDB();
+
         sharedPreferencesEditor.putBoolean(
                 "COMPLETED_ONBOARDING_PREF_NAME", true);
-
-        sharedPreferencesEditor.apply();
         sharedPreferencesEditor.putString(
                 "USER_NAME", lstUserData.get(0).getUname());
         sharedPreferencesEditor.putString(
                 "USER_MOB", lstUserData.get(0).getUmob());
         sharedPreferencesEditor.apply();
 
+        Toast.makeText(getApplicationContext(), "Username: "+pref.getString("USER_NAME","Unknown")+" Mob: "+pref.getString("USER_MOB","Unknown"), Toast.LENGTH_LONG).show();
+
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_id);
         tabLayout = (TabLayout) findViewById(R.id.tab);
         viewPager = (ViewPager) findViewById(R.id.viewpager_id);
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
-//        locationAlert = new AlertDialog.Builder(MainLiberActivity.this);
-//        locationAlert.setTitle("Oops!, We are not yet in your city")
-//                .setMessage("We'll come back to you once we are in your city.")
-//                .setCancelable(false)
-//                .setPositiveButton("Close Liber", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        finish();
-//                    }
-//                });
-//
-//        AlertDialog alert = locationAlert.create();
-//
-//        if(city.toLowerCase().contains("bang")){
-//            alert.show();
-//        }
 
         adapter.addFragment(new LibraryFragment(), "Library");
         adapter.addFragment(new BookshelveFragment(), "Bookshelf");
@@ -145,10 +117,9 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void setUserData(){
-
+    private void getUserNameFromDB(){
         databaseHelper = new DatabaseHelper(getApplicationContext());
-        Cursor result = databaseHelper.getUserDetails("7338239977");
+        Cursor result = databaseHelper.getUserDetails();
         lstUserData = new ArrayList<UserPojo>();
 
         while (result.moveToNext()){

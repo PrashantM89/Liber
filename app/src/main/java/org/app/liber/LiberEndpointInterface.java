@@ -60,4 +60,8 @@ public interface LiberEndpointInterface {
     @POST("txn/createUsrTxn")
     Call<ResponseBody> insertUserTxn(@Body TransactionPojo txn);
 
+    //User
+    @POST("user/createUser")
+    Call<ResponseBody> createNewUser(@Body UserPojo userPojo);
+
 }
