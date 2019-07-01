@@ -18,8 +18,8 @@
     <string name="empty_mesg">Your bookshelf is empty. Start stacking your books for others to read.</string>
     <string name="cover_label">Picture</string>
     <string name="rent_it_label">Rent Now</string>
-    <string name="book_upload_help">Use the search bar to search for details of the book you want to make available for others to rent.</string>
-    <string name="book_upload_confirm">By uploading a book, you confirm to have a physical copy of the same book.</string>
+    <string name="book_upload_help">\u2022 Use the search bar to search for details of the book you want to make available for others to rent.</string>
+    <string name="book_upload_confirm">\u2022 By uploading a book, you confirm to have a physical copy of the same book.</string>
     <string name="bookshelf_upload_help">Your shelf is empty.</string>
     <string name="bookshelf_empty_confirm">Add your books and make it available for others to rent it.</string>
     <string-array name="max_results">
@@ -28,7 +28,7 @@
         <item>4</item>
     </string-array>
     <string name="otp_verify_title1">Enter OTP Code</string>
-    <string name="otp_verify_title2">Please type the verification code sent to +91 </string>
+    <string name="otp_verify_title2">Please type the verification code sent to mobile number </string>
     <string name="otp_title1">Enter your mobile number</string>
     <string name="otp_title2">Tap Next to verify your account with your phone number. We will send a One Time SMS to this number.</string>
     <string name="order_complete">Order placed</string>

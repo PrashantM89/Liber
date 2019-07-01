@@ -18,6 +18,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface LiberEndpointInterface {
@@ -64,4 +65,6 @@ public interface LiberEndpointInterface {
     @POST("user/createUser")
     Call<ResponseBody> createNewUser(@Body UserPojo userPojo);
 
+    @GET("user/user/{umob}")
+    Call<UserPojo> getUserDetails(@Path("umob") String umob);
 }

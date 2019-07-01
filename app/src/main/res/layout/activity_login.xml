@@ -67,9 +67,10 @@
         android:orientation="vertical">
         <Button
             android:id="@+id/send_otp_bttn_id"
-            android:layout_width="match_parent"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:layout_gravity="center"
             android:textColor="@color/white"
             android:background="@color/colorPrimary"
             android:textAllCaps="false"

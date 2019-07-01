@@ -59,7 +59,7 @@ public class WalletActivity extends AppCompatActivity {
         walletLLayout = (LinearLayout)findViewById(R.id.wallet_layout_id);
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
 
-        progressDialog = new ProgressDialog(getApplicationContext());
+        progressDialog = new ProgressDialog(WalletActivity.this);
         progressDialog.setMessage(getApplicationContext().getString(R.string.wallet_processing_label));
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
@@ -93,6 +93,10 @@ public class WalletActivity extends AppCompatActivity {
         redeemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            if(Double.parseDouble(walletAmntText.getText().toString())<100){
+                Toast.makeText(getApplicationContext(),"Minimum wallet balance needed to redeem is ₹100.",Toast.LENGTH_LONG).show();
+                return;
+            }else{
                 Snackbar snackbar = Snackbar
                         .make(walletLLayout, "We have received your request. Money will be transferred to your Paytm account within a week time.", Snackbar.LENGTH_LONG)
                         .setAction("OK", new View.OnClickListener() {
@@ -103,6 +107,7 @@ public class WalletActivity extends AppCompatActivity {
                         });
 
                 snackbar.show();
+            }
             }
         });
     }

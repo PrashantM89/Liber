@@ -2,8 +2,11 @@ package org.app.liber.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,79 +16,93 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.libraries.places.api.model.Place;
 
+import org.app.liber.LiberApiBase;
+import org.app.liber.LiberEndpointInterface;
 import org.app.liber.R;
+import org.app.liber.adapter.TransactionAdapter;
 import org.app.liber.fragment.ProfileInputDialogFragment;
 import org.app.liber.helper.ToastUtil;
+import org.app.liber.pojo.TransactionPojo;
+import org.app.liber.pojo.UserPojo;
+
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MyProfileActivity extends AppCompatActivity{
 
-    private LinearLayout mFirstName;
-    private LinearLayout mLastName;
-    private LinearLayout mDisplayName;
-    private LinearLayout mEmail;
-    private LinearLayout mAddress;
-
-    private EditText firstName;
-    private EditText lastName;
-    private EditText displayName;
-    private EditText email;
-    private TextView address;
-
-    private Button saveProfileBtn;
-
+    private EditText userEmail;
+    private EditText userName;
+    private EditText userAdd2;
+    private EditText userAdd1;
+    private LiberEndpointInterface service;
+    private Button updateProfileBtn;
+    private ProgressDialog progressDialog;
+    private SharedPreferences pref;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_profile);
 
+        userAdd1 = (EditText) findViewById(R.id.signup_input_address);
+        userName = (EditText) findViewById(R.id.signup_input_name);
+        userEmail = (EditText) findViewById(R.id.signup_input_email);
+        userAdd2 = (EditText) findViewById(R.id.signup_input_add2);
+        updateProfileBtn = (Button)findViewById(R.id.update_profile_id);
+        service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        progressDialog = new ProgressDialog(getApplicationContext());
+        progressDialog.setMessage(getApplicationContext().getString(R.string.processing_txn_label));
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
+        fetchUserDetails();
 
-        mFirstName = (LinearLayout) findViewById(R.id.first_name_row);
-        mLastName = (LinearLayout) findViewById(R.id.last_name_row);
-        mDisplayName = (LinearLayout) findViewById(R.id.display_name_row);
-        mEmail= (LinearLayout) findViewById(R.id.emailid_row);
-        mAddress = (LinearLayout) findViewById(R.id.address_row);
-
-        mAddress.setOnClickListener(new View.OnClickListener() {
+        updateProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
-
             }
         });
+    }
 
-        saveProfileBtn = (Button)findViewById(R.id.save_profile_id);
+    private void fetchUserDetails() {
 
-        firstName = (EditText) findViewById(R.id.first_name);
-        lastName = (EditText) findViewById(R.id.last_name);
-        displayName = (EditText) findViewById(R.id.display_name);
-        email = (EditText) findViewById(R.id.emailid_name);
-        address = (TextView) findViewById(R.id.address_name);
-
-
-        firstName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        Call<UserPojo> call = service.getUserDetails(pref.getString("USER_MOB","Unknown"));
+        call.enqueue(new Callback<UserPojo>() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    if(firstName.getText().equals("") || firstName == null){
-                        ToastUtil.showToast(getApplicationContext(),"First name can be empty.");
-                        firstName.setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                    }
+            public void onResponse(Call<UserPojo> call, Response<UserPojo> response) {
+
+                if(response.code() == 200){
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(),response.body().getUname(),Toast.LENGTH_LONG).show();
+                }else{
+                    progressDialog.dismiss();
+                    System.out.println("-------- "+call.request().url());
+                    Toast.makeText(getApplicationContext(),"Failed pulling user details.",Toast.LENGTH_LONG).show();
                 }
             }
-        });
 
-        saveProfileBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                //ToastUtil.showToast(getApplicationContext(),firstName.getText().toString()+" "+lastName.getText().toString()+" "+displayName.getText().toString()+" "+email.getText().toString()+" "+address.getText().toString()+" ");
-
+            public void onFailure(Call<UserPojo> call, Throwable t) {
+                progressDialog.dismiss();
+                System.out.println("-------- "+call.request().url());
+                Toast.makeText(getApplicationContext(),"Failed pulling user details.",Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchUserDetails();
     }
 }

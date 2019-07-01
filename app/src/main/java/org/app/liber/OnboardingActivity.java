@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.app.liber.activity.LoginActivity;
 import org.app.liber.activity.RegistrationActivity;
 import org.app.liber.adapter.SlideAdapter;
 
@@ -47,7 +48,10 @@ public class OnboardingActivity extends AppCompatActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(getApplicationContext(), RegistrationActivity.class);
+                sharedPreferencesEditor.putBoolean(
+                        "COMPLETED_ONBOARDING_PREF_NAME", true);
+                sharedPreferencesEditor.apply();
+                Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
                 startActivity(i);
                 finish();

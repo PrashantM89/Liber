@@ -17,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.content.ContextCompat;
+
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,7 +28,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+
 import org.app.liber.Service.LocationService;
+import org.app.liber.activity.LoginActivity;
 import org.app.liber.activity.MeActivity;
 import org.app.liber.activity.MyProfileActivity;
 import org.app.liber.activity.NotificationActivity;
@@ -61,6 +66,8 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private SharedPreferences.Editor sharedPreferencesEditor;
     private DatabaseHelper databaseHelper;
     private String shareCode;
+    private FirebaseAuth mAuth;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +75,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         setContentView(R.layout.drawer_activity);
         databaseHelper = new DatabaseHelper(getApplicationContext());
         linearLayout = (LinearLayout)findViewById(R.id.activity_main);
-
+        mAuth = FirebaseAuth.getInstance();
         pref = PreferenceManager.getDefaultSharedPreferences(this);
         sharedPreferencesEditor =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
@@ -86,21 +93,9 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
             i.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(i);
             this.finish();
+        }else{
+            getUserNameFromDB();
         }
-
-
-        getUserNameFromDB();
-
-        sharedPreferencesEditor.putBoolean(
-                "COMPLETED_ONBOARDING_PREF_NAME", true);
-        sharedPreferencesEditor.putString(
-                "USER_NAME", lstUserData.get(0).getUname());
-        sharedPreferencesEditor.putString(
-                "USER_MOB", lstUserData.get(0).getUmob());
-        sharedPreferencesEditor.apply();
-
-        Toast.makeText(getApplicationContext(), "Username: "+pref.getString("USER_NAME","Unknown")+" Mob: "+pref.getString("USER_MOB","Unknown"), Toast.LENGTH_LONG).show();
-
 
         toolbar = (Toolbar) findViewById(R.id.toolbar_id);
         tabLayout = (TabLayout) findViewById(R.id.tab);
@@ -115,6 +110,8 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
     }
 
     private void getUserNameFromDB(){
@@ -135,6 +132,15 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
             userPojo.setUdelete(result.getString(result.getColumnIndex(result.getColumnName(8).toString())));
             lstUserData.add(userPojo);
         }
+
+        sharedPreferencesEditor.putString(
+                "USER_NAME", lstUserData.get(0).getUname());
+        sharedPreferencesEditor.putString(
+                "USER_MOB", lstUserData.get(0).getUmob());
+        sharedPreferencesEditor.putString(
+                "USER_CITY", lstUserData.get(0).getUcity());
+        sharedPreferencesEditor.apply();
+        Toast.makeText(getApplicationContext(), "Username: "+pref.getString("USER_NAME","Unknown")+" Mob: "+pref.getString("USER_MOB","Unknown")+" City: "+pref.getString("USER_CITY","Unknown"), Toast.LENGTH_LONG).show();
     }
 
     private boolean runTimePermission() {
@@ -160,7 +166,13 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                     String latitude = loc.substring(loc.indexOf(" "),loc.length());
                     if(longitude != null && latitude != null){
                         city = locationHelper.getLocation(Double.valueOf(latitude), Double.valueOf(longitude));
-                        locationTxt.setText(city);
+                        if(city == null || city.equals(null) | city.equals("")){
+                            locationTxt.setText(pref.getString("USER_CITY","Unknown"));
+                            Toast.makeText(getApplicationContext(), "City from place api.", Toast.LENGTH_LONG).show();
+                        }else {
+                            locationTxt.setText(city);
+                            Toast.makeText(getApplicationContext(), "City from service.", Toast.LENGTH_LONG).show();
+                        }
                         sharedPreferencesEditor.putString("user_location",city.trim());
                         sharedPreferencesEditor.apply();
                         disableLocation();
@@ -228,6 +240,8 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                 startActivity(new Intent(getApplicationContext(), NotificationActivity.class));
                 break;
             case R.id.logout_id:
+                mAuth.signOut();
+                startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 break;
             case R.id.aboutus_id:
                 Toast.makeText(getApplicationContext(), "Functionality coming soon.", Toast.LENGTH_LONG).show();
@@ -280,4 +294,14 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         }, 2000);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(mAuth.getCurrentUser() == null) {
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+    }
 }

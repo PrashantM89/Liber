@@ -1,10 +1,8 @@
 package org.app.liber.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.location.Address;
 import android.location.Geocoder;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +12,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.Autocomplete;
@@ -26,6 +25,7 @@ import org.app.liber.R;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.helper.DateUtil;
 import org.app.liber.pojo.UserPojo;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -46,6 +46,8 @@ public class RegistrationActivity extends AppCompatActivity  {
     private Button saveUsrDetailsBtn;
     private ProgressBar progressBar;
     private DatabaseHelper databaseHelper;
+    private Geocoder geocoder;
+    private String city="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public class RegistrationActivity extends AppCompatActivity  {
         userEmail = (EditText) findViewById(R.id.signup_input_email);
         userAdd2 = (EditText) findViewById(R.id.signup_input_add2);
         saveUsrDetailsBtn = (Button)findViewById(R.id.btn_save_usr_id);
+        geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
         progressBar = (ProgressBar) findViewById(R.id.userRegProgressBarId);
         databaseHelper = new DatabaseHelper(getApplicationContext());
@@ -97,10 +100,10 @@ public class RegistrationActivity extends AppCompatActivity  {
                     user.setUdelete("N");
                     user.setUlastUpdate(DateUtil.getDate(Calendar.getInstance().getTime()));
                     user.setUsignupDate(DateUtil.getDate(Calendar.getInstance().getTime()));
-                    user.setUaddress(userAdd1 +" "+userAdd2);
-                    user.setUmob("0000000000");
+                    user.setUaddress(userAdd2.getText().toString() +", "+userAdd1.getText().toString());
+                    user.setUmob(getIntent().getStringExtra("mobile").trim());
                     user.setUpin("");
-                    user.setUcity("");
+                    user.setUcity(city);
                     user.setUname(userName.getText().toString());
                     user.setUemail(userEmail.getText().toString());
 
@@ -113,6 +116,7 @@ public class RegistrationActivity extends AppCompatActivity  {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(),"Delivery details Saved",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity(intent);
                             finish();
                         }
@@ -147,8 +151,21 @@ public class RegistrationActivity extends AppCompatActivity  {
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
-                //Toast.makeText(getApplicationContext(),"Place: " + place.getAddress(),Toast.LENGTH_LONG).show();
                 userAdd1.setText(place.getName()+" "+place.getAddress());
+                LatLng quariedLocation = place.getLatLng();
+                Double lat = quariedLocation.latitude;
+                Double lon = quariedLocation.longitude;
+
+                List <Address> addresses = null;
+                try {
+                    addresses = geocoder.getFromLocation(lat, lon, 1);
+                    city = addresses.get(0).getLocality();
+                } catch (IOException e) {
+                    Toast.makeText(getApplicationContext(),"Error: Can't fetch city. ",Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+
+
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 Status status = Autocomplete.getStatusFromIntent(data);
                 Toast.makeText(getApplicationContext(),"An error occurred: " + validationStatus,Toast.LENGTH_LONG).show();

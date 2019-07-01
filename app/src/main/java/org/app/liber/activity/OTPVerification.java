@@ -7,10 +7,12 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -35,6 +37,7 @@ public class OTPVerification extends AppCompatActivity {
     private String verificationId;
     private FirebaseAuth mAuth;
     private Button verifyOTPBtn;
+    private TextView label;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,24 +48,31 @@ public class OTPVerification extends AppCompatActivity {
         progressBar = (ProgressBar)findViewById(R.id.otpVerifyProgressBarId);
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.GONE);
-        mobile = getIntent().getStringExtra("mobile");
+        mobile = "+91"+getIntent().getStringExtra("mobile").trim();
         OTP = (EditText)findViewById(R.id.signup_input_otp_id);
+        label = (TextView)findViewById(R.id.txt_label_id);
         verifyOTPBtn = (Button)findViewById(R.id.verify_otp_id);
+
+        label.setText(getResources().getString(R.string.otp_verify_title2)+" "+mobile);
 
         sendOTPVerificationCode(mobile);
 
         verifyOTPBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+            if(TextUtils.isEmpty(OTP.getText().toString())){
+                Toast.makeText(getApplicationContext(),"Please enter OTP to proceed.",Toast.LENGTH_LONG).show();
+            }else{
                 verify(OTP.getText().toString().trim());
+            }
+
             }
         });
     }
 
 
     private void verify(String code ){
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code); 
+        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationId, code);
         signInwithCredential(credential);
     }
 
@@ -71,7 +81,7 @@ public class OTPVerification extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
+                    Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
                     intent.putExtra("mobile",mobile);
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
@@ -85,7 +95,7 @@ public class OTPVerification extends AppCompatActivity {
 
     private void sendOTPVerificationCode(String number) {
         progressBar.setVisibility(View.VISIBLE);
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(number,3, TimeUnit.MINUTES, TaskExecutors.MAIN_THREAD, mCallBack);
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(number,60, TimeUnit.SECONDS, TaskExecutors.MAIN_THREAD, mCallBack);
     }
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {

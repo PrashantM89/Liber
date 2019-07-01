@@ -95,28 +95,25 @@
                 android:id="@+id/book_upload_help_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
-                android:gravity="center_horizontal"
+                android:layout_marginTop="20dp"
                 android:text="@string/book_upload_help"
                 android:textColor="@color/black"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:textAlignment="center"/>
+                android:textAlignment="textStart"/>
 
             <TextView
                 android:id="@+id/book_upload_confirm_id"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="22dp"
+                android:layout_marginTop="20dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
-                android:gravity="center_horizontal"
                 android:text="@string/book_upload_confirm"
-                android:textColor="#ff0000"
+                android:textColor="@color/black"
                 android:textSize="15sp"
-                android:textAlignment="center"
+                android:textAlignment="textStart"
                 />
 
         </LinearLayout>

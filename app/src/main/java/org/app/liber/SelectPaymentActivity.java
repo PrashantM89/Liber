@@ -21,10 +21,12 @@ import android.widget.Toast;
 
 import org.app.liber.adapter.RecyclerViewAdapter;
 import org.app.liber.helper.DatabaseHelper;
+import org.app.liber.helper.DateUtil;
 import org.app.liber.model.Book;
 import org.app.liber.model.UserTransactionModel;
 import org.app.liber.pojo.BookshelfPojo;
 import org.app.liber.pojo.TransactionPojo;
+import org.app.liber.pojo.WalletPojo;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -65,12 +67,15 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private LinearLayout linearLayout;
     private String tenureSelected;
     private Date today;
+    private Date tomorrow;
     private int noofdays = 0;
     private Calendar calendar;
+    private Calendar tomorrowCal;
     private SharedPreferences pref;
     private String userLocation;
     private double gstAmount = 0.0;
     private LiberEndpointInterface service;
+    private int totalWalletAmount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +92,9 @@ public class SelectPaymentActivity extends AppCompatActivity {
         });
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-        databaseHelper = new DatabaseHelper(getApplicationContext());
-        walletAmnt = databaseHelper.getWalletAmnt("7338239977");
+    //    databaseHelper = new DatabaseHelper(getApplicationContext());
+       //TODO: Get from server
+      //  walletAmnt =
         linearLayout = (LinearLayout)findViewById(R.id.linearLayForSnackBar);
         orderTitle = (TextView)findViewById(R.id.os_title_id);
         codBtn = (Button)findViewById(R.id.cod_bttn_id);
@@ -102,8 +108,8 @@ public class SelectPaymentActivity extends AppCompatActivity {
         dateExtFeesTxt = (TextView)findViewById(R.id.date_ext_fees_id);
         gstTxt = (TextView)findViewById(R.id.gst_amount_id);
 
-        userLocation = pref.getString("user_location","unknown");
-
+        userLocation = pref.getString("USER_CITY","unknown");
+        getWalletAmountFromServer();
 
         if(userLocation.equals("unknown") || userLocation == null){
             codBtn.setEnabled(false);
@@ -118,6 +124,13 @@ public class SelectPaymentActivity extends AppCompatActivity {
         today = new Date();
         calendar = Calendar.getInstance();
         calendar.setTime(today);
+
+        tomorrow = new Date();
+        tomorrowCal = calendar;
+        tomorrowCal.setTime(today);
+        tomorrowCal.add(Calendar.DATE, 1);
+        tomorrow = tomorrowCal.getTime();
+
         final DateFormat dateFormat = new SimpleDateFormat(
                 "dd/MM/yy");
 
@@ -147,7 +160,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         //Picasso.with(getApplicationContext()).load(l.getSmallThumbnailLink()).resize(100,150).into(orderImg);
 
         orderTitle.setText(l.getTitle());
-        walletblncAmntTxt.setText(String.valueOf(walletAmnt));
+
         walletAmntTxt.setText("0");
         totalAmntTxt.setText(finalAmountRvrs());
 
@@ -159,19 +172,18 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     j.putExtra("tx_mode","Cash");
                     Date c = Calendar.getInstance().getTime();
 
-                    SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                    String formattedDate = df.format(c);
+
                     TransactionPojo usrTx = new TransactionPojo();
                     usrTx.setTxId(String.valueOf(c.getTime()));
                     usrTx.setTxPaymentMode("CASH");
-                    usrTx.setTxDate(formattedDate);
+                    usrTx.setTxDate(DateUtil.getDate(today));
                     usrTx.setTxDeliverySts("Pending");
                     usrTx.setTxAmount(totalAmntTxt.getText().toString());
                     usrTx.setTxDelete("N");
-                    usrTx.setTxMob("7338239977");
-                    usrTx.setTxDeliveryDate(formattedDate);
+                    usrTx.setTxMob(pref.getString("USER_MOB","unknown"));
+                    usrTx.setTxDeliveryDate(DateUtil.getDate(tomorrow));
                     usrTx.setTxType("Renter");
-                    usrTx.setTxUser("Prashant");
+                    usrTx.setTxUser(pref.getString("USER_NAME","unknown"));
                     usrTx.setTxReturnDate(returnDateTxt.getText().toString());
                     usrTx.setTxBook(orderTitle.getText().toString());
                     usrTx.setTxBookOwner(l.getU_id());
@@ -208,13 +220,43 @@ public class SelectPaymentActivity extends AppCompatActivity {
         walletChckBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+            if(Integer.parseInt(walletblncAmntTxt.getText().toString())<50) {
+                Toast.makeText(getApplicationContext(),"Minimum wallet balance needed is ₹50.",Toast.LENGTH_LONG).show();
+                return;
+            }else {
                 if (((CheckBox) view).isChecked()) {
                     totalAmntTxt.setText(finalAmount());
-                    walletAmntTxt.setText(String.valueOf(Double.valueOf(bookAmnt)-Double.parseDouble(totalAmntTxt.getText().toString())));
-                }else{
+                    walletAmntTxt.setText(String.format("%.2f", Double.valueOf(bookAmnt) - Double.parseDouble(totalAmntTxt.getText().toString())));
+                } else {
                     totalAmntTxt.setText(finalAmountRvrs());
                     walletAmntTxt.setText("0");
                 }
+            }
+            }
+        });
+    }
+
+    private void getWalletAmountFromServer() {
+
+        Call<ArrayList<WalletPojo>> call = service.getUserWalletData(pref.getString("USER_MOB","unknown"));
+        call.enqueue(new Callback<ArrayList<WalletPojo>>() {
+
+            @Override
+            public void onResponse(Call<ArrayList<WalletPojo>> call, Response<ArrayList<WalletPojo>> response) {
+                Double amount = 0.0;
+                Toast.makeText(getApplicationContext(),response.body().get(0).getWamntAdded(),Toast.LENGTH_LONG).show();
+
+                for(WalletPojo wallet:response.body()){
+                    amount += Double.parseDouble(wallet.getWamntAdded());
+                }
+                totalWalletAmount = amount.intValue();
+                walletAmnt = totalWalletAmount;
+                walletblncAmntTxt.setText(String.valueOf(totalWalletAmount));
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<WalletPojo>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -271,13 +313,11 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     }
                     Date c = Calendar.getInstance().getTime();
 
-                    SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
-                    String formattedDate = df.format(c);
                     UserTransactionModel usrTx = new UserTransactionModel();
                     usrTx.setTxId(txnId);
                     usrTx.setTxMode("UPI");
                     usrTx.setDeliveryStatus("SUCCESS");
-                    usrTx.setTxDate(formattedDate);
+                    usrTx.setTxDate(DateUtil.getDate(c));
                     usrTx.setDeliveryStatus("Pending");
 
                     databaseHelper.addUsrTxData(usrTx);
@@ -295,7 +335,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
             gstAmount = calculateTotalGST(finalAmount);
             return  String.valueOf(Double.parseDouble(finalAmount)+gstAmount);
         }else if(walletAmnt>bookAmnt){
-            walletAmntTxt.setText(String.valueOf(bookAmnt));
+            walletAmntTxt.setText(String.format("%.2f",bookAmnt));
             finalAmount = String.valueOf(0);
             return finalAmount;
         } else{
