@@ -93,8 +93,6 @@ public class SelectPaymentActivity extends AppCompatActivity {
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
     //    databaseHelper = new DatabaseHelper(getApplicationContext());
-       //TODO: Get from server
-      //  walletAmnt =
         linearLayout = (LinearLayout)findViewById(R.id.linearLayForSnackBar);
         orderTitle = (TextView)findViewById(R.id.os_title_id);
         codBtn = (Button)findViewById(R.id.cod_bttn_id);
@@ -172,7 +170,6 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     j.putExtra("tx_mode","Cash");
                     Date c = Calendar.getInstance().getTime();
 
-
                     TransactionPojo usrTx = new TransactionPojo();
                     usrTx.setTxId(String.valueOf(c.getTime()));
                     usrTx.setTxPaymentMode("CASH");
@@ -187,7 +184,9 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setTxReturnDate(returnDateTxt.getText().toString());
                     usrTx.setTxBook(orderTitle.getText().toString());
                     usrTx.setTxBookOwner(l.getU_id());
+                    usrTx.setTxBookOwnerMob(l.getMobile());
                     saveTxn(usrTx);
+                    addMoneyToLenderWallet(usrTx);
                     startActivity(j);
             }
         });
@@ -313,15 +312,25 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     }
                     Date c = Calendar.getInstance().getTime();
 
-                    UserTransactionModel usrTx = new UserTransactionModel();
-                    usrTx.setTxId(txnId);
-                    usrTx.setTxMode("UPI");
-                    usrTx.setDeliveryStatus("SUCCESS");
-                    usrTx.setTxDate(DateUtil.getDate(c));
-                    usrTx.setDeliveryStatus("Pending");
-
-                    databaseHelper.addUsrTxData(usrTx);
-                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
+                    TransactionPojo usrTx = new TransactionPojo();
+                    usrTx.setTxId(String.valueOf(c.getTime()));
+                    usrTx.setTxPaymentMode("UPI");
+                    usrTx.setTxDate(DateUtil.getDate(today));
+                    usrTx.setTxDeliverySts("Pending");
+                    usrTx.setTxAmount(totalAmntTxt.getText().toString());
+                    usrTx.setTxDelete("N");
+                    usrTx.setTxMob(pref.getString("USER_MOB","unknown"));
+                    usrTx.setTxDeliveryDate(DateUtil.getDate(tomorrow));
+                    usrTx.setTxType("Renter");
+                    usrTx.setTxUser(pref.getString("USER_NAME","unknown"));
+                    usrTx.setTxReturnDate(returnDateTxt.getText().toString());
+                    usrTx.setTxBook(orderTitle.getText().toString());
+                    usrTx.setTxBookOwner(l.getU_id());
+                    usrTx.setTxBookOwnerMob(l.getMobile());
+                    saveTxn(usrTx);
+                    addMoneyToLenderWallet(usrTx);
+//                    databaseHelper.addUsrTxData(usrTx);
+//                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
                     startActivity(j);
                 }
             }
@@ -375,5 +384,37 @@ public class SelectPaymentActivity extends AppCompatActivity {
                 });
 
         snackbar.show();
+    }
+
+    public void addMoneyToLenderWallet(TransactionPojo txn){
+
+        WalletPojo money = new WalletPojo();
+        money.setWuid(txn.getTxBookOwner());
+        money.setWmob(txn.getTxBookOwnerMob());
+        money.setWamntAdded(String.valueOf(Double.parseDouble(txn.getTxAmount())*0.40));
+        money.setWbookDate(DateUtil.getDate(Calendar.getInstance().getTime()));
+        money.setWdelete("N");
+        money.setWbookName(txn.getTxBook());
+
+        Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertMoneyInToWallet(money);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                progressDialog.dismiss();
+                if(response.code() == 200){
+                    Toast.makeText(getApplicationContext(),"Amount added to lender's Liber acount",Toast.LENGTH_SHORT).show();
+                }else{
+                    progressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(),"Error :"+response.errorBody(),Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                progressDialog.dismiss();
+                Toast.makeText(getApplicationContext(),"Error :"+t.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

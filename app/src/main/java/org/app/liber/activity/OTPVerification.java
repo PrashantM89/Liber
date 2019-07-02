@@ -1,7 +1,9 @@
 package org.app.liber.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,10 +26,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 
+import org.app.liber.LiberApiBase;
+import org.app.liber.LiberEndpointInterface;
 import org.app.liber.MainLiberActivity;
 import org.app.liber.R;
+import org.app.liber.pojo.UserPojo;
 
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class OTPVerification extends AppCompatActivity {
 
@@ -38,7 +47,10 @@ public class OTPVerification extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private Button verifyOTPBtn;
     private TextView label;
-
+    private LiberEndpointInterface service;
+    private SharedPreferences pref;
+    private boolean exist = false;
+    private Intent i;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,8 +64,12 @@ public class OTPVerification extends AppCompatActivity {
         OTP = (EditText)findViewById(R.id.signup_input_otp_id);
         label = (TextView)findViewById(R.id.txt_label_id);
         verifyOTPBtn = (Button)findViewById(R.id.verify_otp_id);
+        service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
 
         label.setText(getResources().getString(R.string.otp_verify_title2)+" "+mobile);
+
+        i = getIntent();
 
         sendOTPVerificationCode(mobile);
 
@@ -64,6 +80,7 @@ public class OTPVerification extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Please enter OTP to proceed.",Toast.LENGTH_LONG).show();
             }else{
                 verify(OTP.getText().toString().trim());
+
             }
 
             }
@@ -81,17 +98,26 @@ public class OTPVerification extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
-                    Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
-                    intent.putExtra("mobile",mobile);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    if(i.getBooleanExtra("exists",false)){
+                        Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
+                        intent.putExtra("mobile",mobile);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }else{
+                        Intent intent = new Intent(getApplicationContext(), RegistrationActivity.class);
+                        intent.putExtra("mobile",mobile);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
                 }else{
                     Toast.makeText(getApplicationContext(),"Error while verification: "+task.getException().getMessage(),Toast.LENGTH_LONG).show();
                 }
             }
         });
     }
+
 
     private void sendOTPVerificationCode(String number) {
         progressBar.setVisibility(View.VISIBLE);

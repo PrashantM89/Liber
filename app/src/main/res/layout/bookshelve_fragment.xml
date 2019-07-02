@@ -28,7 +28,7 @@
             android:layout_marginTop="15dp"
             android:gravity="center_horizontal"
             android:text="@string/bookshelf_upload_help"
-            android:textColor="@color/black"
+            android:textColor="@color/navy"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginLeft="5dp"
@@ -42,11 +42,21 @@
             android:layout_marginTop="2dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:gravity="center_horizontal"
             android:text="@string/bookshelf_empty_confirm"
-            android:textColor="#ff0000"
             android:textSize="15sp"
-            android:textAlignment="center"
+            android:textAlignment="textStart"
+            />
+
+        <TextView
+            android:id="@+id/book_upload_confirm2_id"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:text="@string/bookshelf_empty_confirm2"
+            android:textSize="15sp"
+            android:textAlignment="textStart"
             />
     </LinearLayout>
 

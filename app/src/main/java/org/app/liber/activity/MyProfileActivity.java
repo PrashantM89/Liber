@@ -41,8 +41,8 @@ public class MyProfileActivity extends AppCompatActivity{
 
     private EditText userEmail;
     private EditText userName;
-    private EditText userAdd2;
     private EditText userAdd1;
+    private EditText mob;
     private LiberEndpointInterface service;
     private Button updateProfileBtn;
     private ProgressDialog progressDialog;
@@ -55,7 +55,7 @@ public class MyProfileActivity extends AppCompatActivity{
         userAdd1 = (EditText) findViewById(R.id.signup_input_address);
         userName = (EditText) findViewById(R.id.signup_input_name);
         userEmail = (EditText) findViewById(R.id.signup_input_email);
-        userAdd2 = (EditText) findViewById(R.id.signup_input_add2);
+        mob = (EditText)findViewById(R.id.signup_input_mob);
         updateProfileBtn = (Button)findViewById(R.id.update_profile_id);
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -82,11 +82,13 @@ public class MyProfileActivity extends AppCompatActivity{
             public void onResponse(Call<UserPojo> call, Response<UserPojo> response) {
 
                 if(response.code() == 200){
+                    userEmail.setText(response.body().getUemail());
+                    userAdd1.setText(response.body().getUaddress());
+                    userName.setText(response.body().getUname());
+                    mob.setText(response.body().getUmob());
                     progressDialog.dismiss();
-                    Toast.makeText(getApplicationContext(),response.body().getUname(),Toast.LENGTH_LONG).show();
                 }else{
                     progressDialog.dismiss();
-                    System.out.println("-------- "+call.request().url());
                     Toast.makeText(getApplicationContext(),"Failed pulling user details.",Toast.LENGTH_LONG).show();
                 }
             }
@@ -94,7 +96,6 @@ public class MyProfileActivity extends AppCompatActivity{
             @Override
             public void onFailure(Call<UserPojo> call, Throwable t) {
                 progressDialog.dismiss();
-                System.out.println("-------- "+call.request().url());
                 Toast.makeText(getApplicationContext(),"Failed pulling user details.",Toast.LENGTH_LONG).show();
             }
         });

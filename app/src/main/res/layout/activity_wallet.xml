@@ -96,7 +96,7 @@
         android:id="@+id/redeem_bttn_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Receive wallet balance"
+        android:text="Redeem wallet balance"
         android:layout_margin="20dp"
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimary"/>

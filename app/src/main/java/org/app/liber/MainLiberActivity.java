@@ -58,7 +58,6 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
     private Toolbar toolbar;
     private TextView locationTxt;
     private LinearLayout linearLayout;
-    private String city;
     private SharedPreferences pref;
     private boolean doubleBackToExitPressedOnce = false;
     private LocationHelper locationHelper;
@@ -80,13 +79,9 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
         sharedPreferencesEditor =
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
-        locationHelper = new LocationHelper(getApplicationContext());
+       // locationHelper = new LocationHelper(getApplicationContext());
 
         locationTxt = (TextView) findViewById(R.id.toolbar_location_id);
-     
-       if(!runTimePermission()){
-           enableLocation();
-       }
 
         if (!pref.getBoolean("COMPLETED_ONBOARDING_PREF_NAME", false)) {
             Intent i = new Intent(this, OnboardingActivity.class);
@@ -110,7 +105,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+        locationTxt.setText(pref.getString("USER_CITY","Location Unknown"));
 
     }
 
@@ -133,86 +128,27 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
             lstUserData.add(userPojo);
         }
 
-        sharedPreferencesEditor.putString(
-                "USER_NAME", lstUserData.get(0).getUname());
-        sharedPreferencesEditor.putString(
-                "USER_MOB", lstUserData.get(0).getUmob());
-        sharedPreferencesEditor.putString(
-                "USER_CITY", lstUserData.get(0).getUcity());
-        sharedPreferencesEditor.apply();
+
         Toast.makeText(getApplicationContext(), "Username: "+pref.getString("USER_NAME","Unknown")+" Mob: "+pref.getString("USER_MOB","Unknown")+" City: "+pref.getString("USER_CITY","Unknown"), Toast.LENGTH_LONG).show();
-    }
-
-    private boolean runTimePermission() {
-
-        if(Build.VERSION.SDK_INT >= 23 && ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED){
-            requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION }, 100);
-            onResume();
-            return true;
-        }
-        return false;
     }
 
     @Override
     public void onResume(){
         super.onResume();
 
-        if(broadcastReceiver == null){
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    String loc = intent.getStringExtra("cordinates");
-                    String longitude =loc.substring(0,loc.indexOf(" "));
-                    String latitude = loc.substring(loc.indexOf(" "),loc.length());
-                    if(longitude != null && latitude != null){
-                        city = locationHelper.getLocation(Double.valueOf(latitude), Double.valueOf(longitude));
-                        if(city == null || city.equals(null) | city.equals("")){
-                            locationTxt.setText(pref.getString("USER_CITY","Unknown"));
-                            Toast.makeText(getApplicationContext(), "City from place api.", Toast.LENGTH_LONG).show();
-                        }else {
-                            locationTxt.setText(city);
-                            Toast.makeText(getApplicationContext(), "City from service.", Toast.LENGTH_LONG).show();
-                        }
-                        sharedPreferencesEditor.putString("user_location",city.trim());
-                        sharedPreferencesEditor.apply();
-                        disableLocation();
-                    }
-                }
-            };
-        }
-
-        registerReceiver(broadcastReceiver, new IntentFilter("location_update"));
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if(requestCode == 100){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
-                enableLocation();
-            }else {
-                runTimePermission();
-            }
-        }
+
     }
 
-    private void enableLocation() {
-        Intent i = new Intent(getApplicationContext(), LocationService.class);
-        startService(i);
-    }
-
-
-    private void disableLocation() {
-        Intent i = new Intent(getApplicationContext(), LocationService.class);
-        stopService(i);
-    }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        if(broadcastReceiver != null){
-            unregisterReceiver(broadcastReceiver);
-        }
+
     }
 
     @Override
@@ -241,6 +177,8 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                 break;
             case R.id.logout_id:
                 mAuth.signOut();
+                sharedPreferencesEditor.clear();
+                sharedPreferencesEditor.apply();
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 break;
             case R.id.aboutus_id:

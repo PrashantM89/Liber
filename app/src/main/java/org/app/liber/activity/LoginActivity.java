@@ -1,6 +1,8 @@
 package org.app.liber.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -9,12 +11,22 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.app.liber.LiberApiBase;
+import org.app.liber.LiberEndpointInterface;
 import org.app.liber.R;
+import org.app.liber.pojo.UserPojo;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
     private EditText mobileNo;
     private Button sendOTPBtn;
+    private LiberEndpointInterface service;
+    private SharedPreferences pref;
+    private SharedPreferences.Editor sharedPreferencesEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +35,10 @@ public class LoginActivity extends AppCompatActivity {
 
         mobileNo = (EditText)findViewById(R.id.signup_input_mobile_id);
         sendOTPBtn = (Button)findViewById(R.id.send_otp_bttn_id);
-
+        service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferencesEditor =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
 
         sendOTPBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -33,13 +48,50 @@ public class LoginActivity extends AppCompatActivity {
                     mobileNo.requestFocus();
                     return;
                 }
+                existingUser();
+            }
+        });
+    }
 
+
+    private void existingUser() {
+        Call<UserPojo> call = service.getUserDetails("+91"+mobileNo.getText().toString().trim());
+
+        call.enqueue(new Callback<UserPojo>() {
+            @Override
+            public void onResponse(Call<UserPojo> call, Response<UserPojo> response) {
                 Intent intent = new Intent(getApplicationContext(), OTPVerification.class);
                 intent.putExtra("mobile",mobileNo.getText().toString());
+                sharedPreferencesEditor.putString("USER_MOB", "+91"+mobileNo.getText().toString().trim());
+                sharedPreferencesEditor.apply();
+                if(response.code() == 200){
+
+                    if(response.body().getUmob().isEmpty() || response.body().getUmob().equals("") || response.body().getUmob().equals(null)){
+                        intent.putExtra("exists",false);
+                    }else{
+                        intent.putExtra("exists",true);
+                        sharedPreferencesEditor.putString("USER_NAME", response.body().getUname().trim());
+                        sharedPreferencesEditor.apply();
+                        sharedPreferencesEditor.putString("USER_CITY", response.body().getUcity().trim());
+                        sharedPreferencesEditor.apply();
+                    }
+
+                }else{
+
+                    //Toast.makeText(getApplicationContext(),"Failed pulling user details.",Toast.LENGTH_LONG).show();
+                }
                 startActivity(intent);
                 finish();
             }
+
+            @Override
+            public void onFailure(Call<UserPojo> call, Throwable t) {
+
+                //Toast.makeText(getApplicationContext(),"Failed pulling user details.",Toast.LENGTH_LONG).show();
+            }
         });
+
+
     }
 
     @Override

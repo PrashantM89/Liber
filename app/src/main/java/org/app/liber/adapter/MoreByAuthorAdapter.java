@@ -83,7 +83,7 @@ public class MoreByAuthorAdapter extends RecyclerView.Adapter<MoreByAuthorAdapte
                     lib.setU_id(lstLibraryBooks.get(getPosition()).getU_id());
                     lib.setAvailable(lstLibraryBooks.get(getPosition()).getAvailable());
                     lib.setReader(lstLibraryBooks.get(getPosition()).getReader());
-
+                    lib.setMobile(lstLibraryBooks.get(getPosition()).getMobile());
                     intent2.putExtra("LibraryBookDetail",lib);
                     intent2.putExtra("LibraryObject",lstLibraryBooks);
                     intent2.setFlags(intent2.FLAG_ACTIVITY_NEW_TASK);

@@ -46,6 +46,9 @@ private String txBook;
 @SerializedName("txBookOwner")
 @Expose
 private String txBookOwner;
+@SerializedName("txBookOwnerMob")
+@Expose
+private String txBookOwnerMob;
 
 
 private final static long serialVersionUID = -7690592283167903917L;
@@ -57,6 +60,15 @@ private final static long serialVersionUID = -7690592283167903917L;
     public void setTxMob(String txMob) {
         this.txMob = txMob;
     }
+
+    public String getTxBookOwnerMob() {
+        return txBookOwnerMob;
+    }
+
+    public void setTxBookOwnerMob(String txBookOwnerMob) {
+        this.txBookOwnerMob = txBookOwnerMob;
+    }
+
 
     public String getTxBookOwner() {
         return txBookOwner;

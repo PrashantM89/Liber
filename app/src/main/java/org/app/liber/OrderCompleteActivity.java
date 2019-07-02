@@ -55,6 +55,7 @@ public class OrderCompleteActivity extends AppCompatActivity {
         }else{
             txModeText.setText(R.string.noncash_mode_mesg);
         }
+
     }
 
     @Override

@@ -1,8 +1,10 @@
 package org.app.liber.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -47,7 +49,9 @@ public class RegistrationActivity extends AppCompatActivity  {
     private ProgressBar progressBar;
     private DatabaseHelper databaseHelper;
     private Geocoder geocoder;
-    private String city="";
+    private String city;
+    private SharedPreferences.Editor sharedPreferencesEditor;
+    private UserPojo user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,11 +66,11 @@ public class RegistrationActivity extends AppCompatActivity  {
         geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
         progressBar = (ProgressBar) findViewById(R.id.userRegProgressBarId);
-        databaseHelper = new DatabaseHelper(getApplicationContext());
-
         progressBar.setIndeterminate(true);
         progressBar.setVisibility(View.GONE);
-
+        databaseHelper = new DatabaseHelper(getApplicationContext());
+        sharedPreferencesEditor =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
         String apiKey = getString(R.string.api_key);
 
         if (apiKey.equals("")) {
@@ -96,7 +100,7 @@ public class RegistrationActivity extends AppCompatActivity  {
                 validationStatus = validateUserEntries();
                 progressBar.setVisibility(View.VISIBLE);
                 if(validationStatus){
-                    final UserPojo user = new UserPojo();
+                    user = new UserPojo();
                     user.setUdelete("N");
                     user.setUlastUpdate(DateUtil.getDate(Calendar.getInstance().getTime()));
                     user.setUsignupDate(DateUtil.getDate(Calendar.getInstance().getTime()));
@@ -112,7 +116,7 @@ public class RegistrationActivity extends AppCompatActivity  {
                     call.enqueue(new Callback<ResponseBody>() {
                         @Override
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            databaseHelper.addUser(user);
+         //                   databaseHelper.addUser(user);
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(getApplicationContext(),"Delivery details Saved",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), MainLiberActivity.class);
@@ -160,6 +164,10 @@ public class RegistrationActivity extends AppCompatActivity  {
                 try {
                     addresses = geocoder.getFromLocation(lat, lon, 1);
                     city = addresses.get(0).getLocality();
+                    sharedPreferencesEditor.putString("USER_CITY", city);
+                    sharedPreferencesEditor.apply();
+                    sharedPreferencesEditor.putString("USER_NAME", userName.getText().toString().trim());
+                    sharedPreferencesEditor.apply();
                 } catch (IOException e) {
                     Toast.makeText(getApplicationContext(),"Error: Can't fetch city. ",Toast.LENGTH_LONG).show();
                     e.printStackTrace();

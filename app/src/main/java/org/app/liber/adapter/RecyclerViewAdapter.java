@@ -89,7 +89,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                     lib.setU_id(lstLibraryBooks2.get(getPosition()).getU_id());
                     lib.setAvailable(lstLibraryBooks2.get(getPosition()).getAvailable());
                     lib.setReader(lstLibraryBooks2.get(getPosition()).getReader());
-
+                    lib.setMobile(lstLibraryBooks2.get(getPosition()).getMobile());
                     intent.putExtra("LibraryBookDetail",lib);
                     intent.putExtra("LibraryObject",lstLibraryBooks2);
                     view.getContext().startActivity(intent);

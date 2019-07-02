@@ -118,6 +118,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
                     book.setAvailable("Y");
                     book.setDelete("N");
                     book.setU_id(userName);
+                    book.setMobile(pref.getString("USER_MOB","Unknown"));
 
                     Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertBookInBookshelf(book,book.getU_id());
 
@@ -139,6 +140,7 @@ public class BookListAdapter extends RecyclerView.Adapter<BookListAdapter.ViewHo
                 }
             });
         }
+
     }
 
     private void addPointsInWallet(BookshelfPojo b) {

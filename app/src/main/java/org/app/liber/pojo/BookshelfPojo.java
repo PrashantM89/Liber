@@ -40,6 +40,17 @@ public class BookshelfPojo implements Serializable {
     @SerializedName("delete")
     @Expose
     private String delete;
+    @SerializedName("mobile")
+    @Expose
+    private String mobile;
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
     public String getDor() {
         return dor;

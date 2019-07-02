@@ -48,6 +48,7 @@
                 android:inputType="phone"
                 android:maxLength="10"
                 android:ems="10"
+                android:textAlignment="center"
                 android:hint="Mobile No."
                 />
         </android.support.design.widget.TextInputLayout>
