@@ -243,7 +243,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ArrayList<WalletPojo>> call, Response<ArrayList<WalletPojo>> response) {
                 Double amount = 0.0;
-                Toast.makeText(getApplicationContext(),response.body().get(0).getWamntAdded(),Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(),response.body().get(0).getWamntAdded(),Toast.LENGTH_LONG).show();
 
                 for(WalletPojo wallet:response.body()){
                     amount += Double.parseDouble(wallet.getWamntAdded());

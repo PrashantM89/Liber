@@ -69,6 +69,33 @@
                         android:textAlignment="center"
                         />
 
+                    <LinearLayout
+                        android:id="@+id/return_btn_layout_id"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="10dp"
+                        android:visibility="gone">
+                        <Button
+                            android:id="@+id/return_btn_id"
+                            android:textColor="@color/white"
+                            android:background="@color/primary_500"
+                            android:layout_width="150dp"
+                            android:layout_height="wrap_content"
+                            android:text="Return Book"
+                            android:textAllCaps="false"/>
+                        <!--<Button-->
+                            <!--android:layout_weight="1"-->
+                            <!--android:id="@+id/button2"-->
+                            <!--android:layout_width="0dp"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:text="Button" />-->
+
+                    </LinearLayout>
+
                     <RatingBar
                         android:id="@+id/ratingBar"
                         android:layout_width="wrap_content"
@@ -137,7 +164,8 @@
                 android:text="Submit"
                 android:layout_gravity="center"
                 android:background="@color/colorPrimary"
-                android:elevation="15dp" />
+                android:elevation="15dp"
+                android:textAllCaps="false"/>
         </LinearLayout>
     </LinearLayout>
 

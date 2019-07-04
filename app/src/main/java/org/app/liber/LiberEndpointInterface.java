@@ -40,6 +40,9 @@ public interface LiberEndpointInterface {
     @POST("bookshelf/deleteBook")
     Call<ArrayList<BookshelfPojo>> deleteBook(@Body BookshelfPojo bookshelfPojo);
 
+    @POST("bookshelf/returnBook")
+    Call<ResponseBody> returnBook(@Body BookshelfPojo bookshelfPojo);
+
     //Reviews
     @GET("review/reviews")
     Call<ArrayList<UserReview>> getUserReviews();

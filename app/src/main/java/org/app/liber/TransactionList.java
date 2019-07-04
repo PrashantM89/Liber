@@ -1,6 +1,8 @@
 package org.app.liber;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -27,6 +29,7 @@ public class TransactionList extends AppCompatActivity {
     List<TransactionPojo> lstUserTxn;
     DatabaseHelper databaseHelper;
     TransactionAdapter recyclerViewAdapter;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +48,8 @@ public class TransactionList extends AppCompatActivity {
         recyclerView = (RecyclerView)findViewById(R.id.tx_recycler_id);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        progressDialog = new ProgressDialog(getApplicationContext());
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
+        progressDialog = new ProgressDialog(TransactionList.this);
         progressDialog.setMessage(getApplicationContext().getString(R.string.processing_txn_label));
         progressDialog.setCancelable(false);
         progressDialog.setIndeterminate(true);
@@ -55,8 +59,8 @@ public class TransactionList extends AppCompatActivity {
     public void addUserTransactionFromDB(){
 
         lstUserTxn = new ArrayList<>();
-
-        Call<ArrayList<TransactionPojo>> call = service.getAllUserTxns("7338239977");
+        progressDialog.show();
+        Call<ArrayList<TransactionPojo>> call = service.getAllUserTxns(pref.getString("USER_MOB","unknown"));
         call.enqueue(new Callback<ArrayList<TransactionPojo>>() {
             @Override
             public void onResponse(Call<ArrayList<TransactionPojo>> call, Response<ArrayList<TransactionPojo>> response) {

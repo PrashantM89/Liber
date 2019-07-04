@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
                 sharedPreferencesEditor.apply();
                 if(response.code() == 200){
 
-                    if(response.body().getUmob().isEmpty() || response.body().getUmob().equals("") || response.body().getUmob().equals(null)){
+                    if(response.body().getUmob().isEmpty() || response.body().getUmob().equals("") || response.body().getUmob().equals(null) ){
                         intent.putExtra("exists",false);
                     }else{
                         intent.putExtra("exists",true);

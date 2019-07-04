@@ -117,6 +117,9 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
                 b.setCoverImgUrl(lstBSBooks.get(position).getCoverImgUrl());
                 b.setAvailable(lstBSBooks.get(position).getAvailable());
                 b.setDor(lstBSBooks.get(position).getDor());
+                b.setMobile(lstBSBooks.get(position).getMobile());
+                b.setReader(lstBSBooks.get(position).getReader());
+                b.setU_id(lstBSBooks.get(position).getU_id());
                 intent.putExtra("bookshelfBooks",  b);
 
                   context.startActivity(intent);
