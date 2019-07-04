@@ -92,7 +92,7 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
                     //confirmDeletDialog(myViewHolder.getAdapterPosition());
                 }else{
                     AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                    dialog.setMessage("Someone is still reading it. Wait till you get back your book.");
+                    dialog.setMessage("Book is being read.");
                     dialog.setTitle("Can't remove this book.");
                     dialog.setCancelable(false);
                     dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {

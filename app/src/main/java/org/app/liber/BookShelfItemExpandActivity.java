@@ -3,9 +3,12 @@ package org.app.liber;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.graphics.Palette;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +18,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.app.liber.helper.DateUtil;
 import org.app.liber.pojo.BookshelfPojo;
@@ -44,6 +48,7 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
     private BookshelfPojo returnBookDetail;
     private BookshelfPojo b;
     private LinearLayout returnBtnLLayout;
+    private View backgroundView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +63,7 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
         submitReview = (Button)findViewById(R.id.submit_review_btn_id);
         bookReviewStr = (EditText)findViewById(R.id.book_review_text);
         returnBtnLLayout = (LinearLayout)findViewById(R.id.return_btn_layout_id);
+        backgroundView = (View)findViewById(R.id.background_view_id);
         returnBookDetail = new BookshelfPojo();
         ratingBarCount = "";
         pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -71,7 +77,39 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
 
         b = (BookshelfPojo) i.getSerializableExtra("bookshelfBooks");
 
-        Picasso.with(getApplicationContext()).load(b.getCoverImgUrl()).into(img);
+        //Picasso.with(getApplicationContext()).load(b.getCoverImgUrl()).into(img);
+
+        Picasso.with(getApplicationContext()).load(b.getCoverImgUrl()).into(new Target() {
+            @Override
+            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                assert img != null;
+                img.setImageBitmap(bitmap);
+                Palette.from(bitmap)
+                        .generate(new Palette.PaletteAsyncListener() {
+                            @Override
+                            public void onGenerated(Palette palette) {
+                                Palette.Swatch textSwatch = palette.getVibrantSwatch();
+                                if (textSwatch == null) {
+                                    Toast.makeText(BookShelfItemExpandActivity.this, "Null swatch :(", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                backgroundView.setBackgroundColor(textSwatch.getRgb());
+                            }
+                        });
+
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+            }
+        });
+
         bookname.setText(b.getTitle());
         ratingTxt.setText(R.string.rating_default);
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
@@ -173,7 +211,7 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
     }
 
     private void showReturnBtn() {
-        
+
         if(pref.getString("USER_NAME","unknown").equals(b.getU_id())){
             returnBtnLLayout.setVisibility(View.GONE);
         }else{
