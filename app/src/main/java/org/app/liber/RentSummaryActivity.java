@@ -62,7 +62,8 @@ public class RentSummaryActivity extends AppCompatActivity {
     private HorizontalScrollView moreBySameAuthorLayout;
     private SharedPreferences pref;
     private String userName;
-
+    private double ratingCount = 0.0;
+    private BookshelfPojo l;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,7 +98,7 @@ public class RentSummaryActivity extends AppCompatActivity {
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
 
         Intent i = getIntent();
-        final BookshelfPojo l = (BookshelfPojo)i.getSerializableExtra("LibraryBookDetail");
+        l = (BookshelfPojo)i.getSerializableExtra("LibraryBookDetail");
         final ArrayList<BookshelfPojo> ll = (ArrayList<BookshelfPojo>) i.getSerializableExtra("LibraryObject");
         for(BookshelfPojo ldm:ll){
             if(ldm.getAuthor().contains(l.getAuthor()) && !ldm.getTitle().equals(l.getTitle())) {
@@ -135,7 +136,8 @@ public class RentSummaryActivity extends AppCompatActivity {
         rentBookAuthor.setText(l.getAuthor());
         rentBookDesc.setText(l.getDescription());
         rentBookGenre.setText(l.getGenre());
-        rentBookRating.setText(l.getRating());
+        //TODO-
+
         Picasso.with(getApplicationContext()).load(l.getCoverImgUrl()).resize(150,200).into(rentBookCover);
         makeTextViewResizable(rentBookDesc, 3, "Read More", true);
 
@@ -162,7 +164,6 @@ public class RentSummaryActivity extends AppCompatActivity {
 
 
     }
-
 
     public ArrayList<BookReviewModel> getReaderReviewData(String bookName){
         db = new DatabaseHelper(getApplicationContext());
@@ -259,13 +260,28 @@ public class RentSummaryActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<UserReview>> call, Response<ArrayList<UserReview>> response) {
 
                 lst.clear();
-                for(UserReview review:response.body()){
-
-                    if(review.getUbook().toLowerCase().contains(bookName.toLowerCase())){
-                        lst.add(review);
+//                for(UserReview review:response.body()){
+//
+//                    if(review.getUbook().toLowerCase().contains(bookName.toLowerCase())){
+//                        ratingCount += Double.parseDouble(review.getUstar());
+//                        lst.add(review);
+//                    }
+//                }
+                double j=0.0;
+                for(int i=0;i<response.body().size();i++){
+                    if(response.body().get(i).getUbook().toLowerCase().contains(bookName.toLowerCase())){
+                        ratingCount += Double.parseDouble(response.body().get(i).getUstar());
+                        lst.add(response.body().get(i));
+                        j=j+1;
                     }
                 }
 
+                if(l.getRating().equals("") || l.getRating().equals(null)){
+                    double result = ratingCount/j;
+                    rentBookRating.setText(String.format("%.1f",result/j));
+                }else{
+                    rentBookRating.setText(l.getRating());
+                }
                 readerReviewAdapter = new ReaderReviewAdapter(getApplicationContext(),lst);
                 GridLayoutManager glm = new GridLayoutManager(getApplicationContext(),1);
                 glm.setOrientation(LinearLayoutManager.VERTICAL);

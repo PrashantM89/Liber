@@ -58,7 +58,7 @@
         <activity android:name=".MainLiberActivity" />
         <activity android:name=".RentSummaryActivity" />
         <activity android:name=".BookShelfItemExpandActivity" />
-
+        <receiver android:name=".helper.AlertReceiver"/>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api_key" /> <!-- <meta-data tools:replace="android:value"/> -->

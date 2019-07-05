@@ -1,6 +1,9 @@
 package org.app.liber;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -20,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.app.liber.adapter.RecyclerViewAdapter;
+import org.app.liber.helper.AlertReceiver;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.helper.DateUtil;
 import org.app.liber.model.Book;
@@ -29,7 +33,10 @@ import org.app.liber.pojo.TransactionPojo;
 import org.app.liber.pojo.WalletPojo;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -187,6 +194,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setTxBookOwnerMob(l.getMobile());
                     saveTxn(usrTx);
                     addMoneyToLenderWallet(usrTx);
+                    setNotificationAlarm(usrTx);
                     startActivity(j);
             }
         });
@@ -204,9 +212,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
  ///               intent.setPackage(GOOGLE_TEZ_PACKAGE_NAME);
                 intent.setData(uri);
-
                 Intent chooser = Intent.createChooser(intent,"Pay using any UPI app");
-
                 if(chooser.resolveActivity(getPackageManager())!=null){
                     startActivityForResult(intent, 0);
                 }else{
@@ -233,6 +239,24 @@ public class SelectPaymentActivity extends AppCompatActivity {
             }
             }
         });
+    }
+
+    private void setNotificationAlarm(TransactionPojo txn) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date parse = null;
+        try {
+            parse = sdf.parse(txn.getTxReturnDate());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTime(parse);
+        c.set(Calendar.DATE,c.getTime().getMonth(),c.getTime().getDay(),11,1,0);
+
+        AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(getApplicationContext(),1, intent,0);
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP,c.getTimeInMillis(),pi);
     }
 
     private void getWalletAmountFromServer() {
@@ -328,9 +352,8 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     usrTx.setTxBookOwner(l.getU_id());
                     usrTx.setTxBookOwnerMob(l.getMobile());
                     saveTxn(usrTx);
+                    setNotificationAlarm(usrTx);
                     addMoneyToLenderWallet(usrTx);
-//                    databaseHelper.addUsrTxData(usrTx);
-//                    databaseHelper.addData(new Book(l.getTitle().toString(),l.getAuthor(),l.getCoverImgUrl(),l.getDescription(),l.getGenre(),""));
                     startActivity(j);
                 }
             }

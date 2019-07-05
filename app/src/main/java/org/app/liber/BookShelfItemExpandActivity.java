@@ -56,7 +56,6 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
         setContentView(R.layout.activity_book_shelf_item_expand);
 
         ratingBar = (RatingBar)findViewById(R.id.ratingBar);
-        ratingTxt = (TextView)findViewById(R.id.rating_text_id);
         img = (ImageView)findViewById(R.id.rent_book_img_cover);
         bookname = (TextView)findViewById(R.id.expand_book_title_id);
         returnBookBtn = (Button)findViewById(R.id.return_btn_id);
@@ -77,8 +76,6 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
 
         b = (BookshelfPojo) i.getSerializableExtra("bookshelfBooks");
 
-        //Picasso.with(getApplicationContext()).load(b.getCoverImgUrl()).into(img);
-
         Picasso.with(getApplicationContext()).load(b.getCoverImgUrl()).into(new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -88,7 +85,7 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
                         .generate(new Palette.PaletteAsyncListener() {
                             @Override
                             public void onGenerated(Palette palette) {
-                                Palette.Swatch textSwatch = palette.getVibrantSwatch();
+                                Palette.Swatch textSwatch = palette.getLightVibrantSwatch();
                                 if (textSwatch == null) {
                                     Toast.makeText(BookShelfItemExpandActivity.this, "Null swatch :(", Toast.LENGTH_SHORT).show();
                                     return;
@@ -111,38 +108,11 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
         });
 
         bookname.setText(b.getTitle());
-        ratingTxt.setText(R.string.rating_default);
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                     float ratingInt =  rating;
                     ratingBarCount = String.valueOf(ratingInt);
-
-                    switch ((int) ratingInt){
-                        case 1:
-                            ratingTxt.setText(R.string.rating_1);
-                            ratingTxt.setVisibility(View.VISIBLE);
-                            break;
-                        case 2:
-                            ratingTxt.setText(R.string.rating_2);
-                            ratingTxt.setVisibility(View.VISIBLE);
-                            break;
-                        case 3:
-                            ratingTxt.setText(R.string.rating_3);
-                            ratingTxt.setVisibility(View.VISIBLE);
-                            break;
-                        case 4:
-                            ratingTxt.setText(R.string.rating_4);
-                            ratingTxt.setVisibility(View.VISIBLE);
-                            break;
-                        case 5:
-                            ratingTxt.setText(R.string.rating_5);
-                            ratingTxt.setVisibility(View.VISIBLE);
-                            break;
-                        default:
-                            ratingTxt.setText(R.string.rating_default);
-                            break;
-                    }
                 }
 
         });

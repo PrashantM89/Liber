@@ -106,8 +106,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
                     android:textStyle="bold"
-                    android:text="Done"
                     android:background="@android:color/transparent"
+                    android:text="Done"
                     android:layout_marginRight="5dp"
                     />
             </LinearLayout>

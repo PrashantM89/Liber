@@ -8,13 +8,13 @@
     <View
         android:id="@+id/background_view_id"
         android:layout_width="match_parent"
-        android:layout_height="250dp"         />
+        android:layout_height="240dp"         />
 
     <LinearLayout
         android:id="@+id/rl_two_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal"
         android:gravity="center"
         >
@@ -77,14 +77,14 @@
                         android:gravity="center"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:visibility="gone">
+                        android:layout_marginBottom="5dp"
+                        android:visibility="visible">
                         <Button
                             android:id="@+id/return_btn_id"
                             android:textColor="@color/white"
                             android:background="@color/primary_500"
-                            android:layout_width="150dp"
-                            android:layout_height="wrap_content"
+                            android:layout_width="130dp"
+                            android:layout_height="40dp"
                             android:text="Return Book"
                             android:textAllCaps="false"/>
                         <!--<Button-->
@@ -106,31 +106,6 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/rating_text_id"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/rating_default"
-                        />
-
-                    <!--<TextView-->
-                        <!--android:id="@+id/expand_book_availability_id"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:padding="10dp"-->
-                        <!--android:layout_marginLeft="10dp"-->
-                        <!--android:transitionName="bookAvailableTN"-->
-                         <!--/>-->
-
-                    <!--<TextView-->
-                        <!--android:id="@+id/expand_book_duedate_id"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:padding="10dp"-->
-                        <!--android:layout_marginLeft="10dp"-->
-                        <!--android:transitionName="duedateTN"-->
-                         <!--/>-->
                     <EditText
                         android:id="@+id/book_review_text"
                         android:layout_width="match_parent"
@@ -144,7 +119,8 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:hint="Tell us something about this book or it's author."
+                        android:maxLength="250"
+                        android:hint="Rate and tell us something about this book or author."
                         android:typeface="serif"
                         />
                 </LinearLayout>
@@ -160,7 +136,7 @@
             <Button
                 android:id="@+id/submit_review_btn_id"
                 android:layout_width="250dp"
-                android:layout_height="50dp"
+                android:layout_height="40dp"
                 android:text="Submit"
                 android:layout_gravity="center"
                 android:background="@color/colorPrimary"
