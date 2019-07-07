@@ -36,11 +36,12 @@
                         android:layout_marginStart="@dimen/search_field_right_margin"
                         android:cursorVisible="false"
                         android:hint="@string/search_field_label"
+                        android:drawableLeft="@drawable/ic_search"
                         android:imeOptions="actionSearch"
                         android:inputType="text"
                         android:singleLine="true"
                         android:textColor="@color/book_search_text"
-                        android:textColorHint="@color/book_search_hint" />
+                        android:textColorHint="@color/white" />
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

@@ -37,6 +37,7 @@ import org.app.liber.activity.MeActivity;
 import org.app.liber.activity.MyProfileActivity;
 import org.app.liber.activity.NotificationActivity;
 import org.app.liber.activity.RegistrationActivity;
+import org.app.liber.activity.WebActivity;
 import org.app.liber.adapter.ViewPagerAdapter;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.helper.LocationHelper;
@@ -182,7 +183,7 @@ public class MainLiberActivity extends AppCompatActivity implements BookListFrag
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
                 break;
             case R.id.aboutus_id:
-                Toast.makeText(getApplicationContext(), "Functionality coming soon.", Toast.LENGTH_LONG).show();
+                startActivity(new Intent(getApplicationContext(), WebActivity.class));
                 break;
             case R.id.contactus_id:
                 Intent emailIntent = EmailIntentBuilder.from(getApplicationContext())

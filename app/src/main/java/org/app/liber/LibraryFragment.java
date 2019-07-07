@@ -1,5 +1,6 @@
 package org.app.liber;
 
+import android.app.ProgressDialog;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -35,7 +36,7 @@ public class LibraryFragment extends Fragment{
     private LinearLayout errorLayout;
     private Button tap2Refresh;
     private LiberEndpointInterface service;
-    private ProgressBar progressBar;
+    private ProgressDialog progressDialog;
 
     public LibraryFragment() { }
 
@@ -51,9 +52,10 @@ public class LibraryFragment extends Fragment{
         recyclerView = (RecyclerView)v.findViewById(R.id.library_recyclerview);
         tap2Refresh = (Button)v.findViewById(R.id.tap_to_refresh_bttn_id);
         errorLayout = (LinearLayout)v.findViewById(R.id.error_layout_id);
-        progressBar = (ProgressBar)v.findViewById(R.id.libraryProgressBarId);
-        progressBar.setIndeterminate(true);
-        progressBar.setVisibility(View.VISIBLE);
+        progressDialog = new ProgressDialog(getContext());
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Loading..");
+        progressDialog.show();
         return v;
     }
 
@@ -77,13 +79,13 @@ public class LibraryFragment extends Fragment{
             public void onResponse(Call<ArrayList<BookshelfPojo>> call, Response<ArrayList<BookshelfPojo>> response) {
 
                 if(response.code() == 200){
-                    progressBar.setVisibility(View.GONE);
+                    progressDialog.dismiss();
                     errorLayout.setVisibility(View.GONE);
                     recyclerViewAdapter = new RecyclerViewAdapter(getContext(),lstLibraryBooks = response.body());
                     recyclerView.setLayoutManager(new GridLayoutManager(getActivity(),3));
                     recyclerView.setAdapter(recyclerViewAdapter);
                 }else{
-                    progressBar.setVisibility(View.GONE);
+                    progressDialog.dismiss();
                     errorLayout.setVisibility(View.VISIBLE);
 
                     tap2Refresh.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +99,7 @@ public class LibraryFragment extends Fragment{
 
             @Override
             public void onFailure(Call<ArrayList<BookshelfPojo>> call, Throwable t) {
-                progressBar.setVisibility(View.GONE);
+                progressDialog.dismiss();
                 errorLayout.setVisibility(View.VISIBLE);
                 tap2Refresh.setOnClickListener(new View.OnClickListener() {
                     @Override

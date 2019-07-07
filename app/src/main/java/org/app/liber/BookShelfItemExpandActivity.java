@@ -9,6 +9,8 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,11 +22,13 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.app.liber.adapter.ReaderReviewAdapter;
 import org.app.liber.helper.DateUtil;
 import org.app.liber.pojo.BookshelfPojo;
 import org.app.liber.pojo.UserReview;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -178,6 +182,8 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
 
            }
        });
+
+        fetchBookReview();
     }
 
     private void showReturnBtn() {
@@ -187,5 +193,36 @@ public class BookShelfItemExpandActivity extends AppCompatActivity {
         }else{
             returnBtnLLayout.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private void fetchBookReview() {
+        Call<ArrayList<UserReview>> call = service.getUserReviews();
+        call.enqueue(new Callback<ArrayList<UserReview>>() {
+            @Override
+            public void onResponse(Call<ArrayList<UserReview>> call, Response<ArrayList<UserReview>> response) {
+
+                for(int i=0;i<response.body().size();i++){
+                    if(response.body().get(i).getUbook().equals(b.getTitle()) && response.body().get(i).getUid().equals(pref.getString("USER_NAME","unknown"))){
+                        ratingBar.setRating((float)Double.parseDouble(response.body().get(i).getUstar()));
+                        bookReviewStr.setText(response.body().get(i).getUreview());
+                        bookReviewStr.setEnabled(false);
+                        submitReview.setVisibility(View.GONE);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<UserReview>> call, Throwable t) {
+                Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+            }
+        });
+
     }
 }

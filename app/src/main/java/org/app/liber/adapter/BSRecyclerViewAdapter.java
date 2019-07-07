@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,13 +23,17 @@ import org.app.liber.LiberApiBase;
 import org.app.liber.LiberEndpointInterface;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.R;
+import org.app.liber.helper.DateUtil;
 import org.app.liber.helper.ToastUtil;
 import org.app.liber.model.Book;
 import org.app.liber.pojo.BookshelfPojo;
+import org.app.liber.pojo.WalletPojo;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,14 +96,14 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
                     }
                     //confirmDeletDialog(myViewHolder.getAdapterPosition());
                 }else{
-                    AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-                    dialog.setMessage("Book is being read.");
-                    dialog.setTitle("Can't remove this book.");
-                    dialog.setCancelable(false);
-                    dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+                            dialog.setMessage("Book is being read.");
+                            dialog.setTitle("Can't remove this book.");
+                            dialog.setCancelable(false);
+                            dialog.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int j) {
-                              return;
+                            return;
                         }
                     });
                     dialog.create().show();
@@ -123,25 +128,21 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
                 intent.putExtra("bookshelfBooks",  b);
 
                   context.startActivity(intent);
-//                ActivityOptions options = (ActivityOptions) ActivityOptions.makeSceneTransitionAnimation((Activity) context,pairs);
-//                context.startActivity(intent,options.toBundle());
-
             }
         });
     }
 
     public void confirmDeletDialog(final int p){
-        AlertDialog.Builder dialog = new AlertDialog.Builder(context);
-        dialog.setMessage("Removing will make it unavailable for others to rent.");
-        dialog.setTitle("Remove book "+lstBSBooks.get(p).getTitle()+" from bookshelf?");
-        dialog.setCancelable(false);
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            AlertDialog.Builder dialog = new AlertDialog.Builder(context);
+            dialog.setMessage("Removing will make it unavailable for others to rent.");
+            dialog.setTitle("Remove book "+lstBSBooks.get(p).getTitle()+" from bookshelf?");
+            dialog.setCancelable(false);
+            dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int j) {
-
                 updateBackend(p);
                 removeItem(p);
-
+                updateWalletIfEarlyRemove(lstBSBooks.get(p));
             }
         });
 
@@ -153,6 +154,31 @@ public class BSRecyclerViewAdapter extends RecyclerView.Adapter<BSRecyclerViewAd
         });
 
         dialog.create().show();
+    }
+
+    private void updateWalletIfEarlyRemove(BookshelfPojo bookshelfPojo) {
+
+        WalletPojo money = new WalletPojo();
+        money.setWuid(bookshelfPojo.getU_id());
+        money.setWmob(bookshelfPojo.getMobile());
+        money.setWamntAdded("-3");
+        money.setWbookDate(DateUtil.getDate(Calendar.getInstance().getTime()));
+        money.setWdelete("N");
+        money.setWbookName(bookshelfPojo.getTitle());
+
+        Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertMoneyInToWallet(money);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Toast.makeText(context,"Wallet Updated",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(context,"Failed updating wallet : "+t.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     public void updateBackend(final int p){

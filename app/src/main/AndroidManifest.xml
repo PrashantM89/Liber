@@ -17,10 +17,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activity.WebActivity"></activity>
         <activity
             android:name=".activity.OTPVerification"
             android:label="@string/title_activity_otpverification"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.LoginActivity" />
         <activity android:name=".activity.RegistrationActivity" />
         <activity android:name=".activity.MyProfileActivity" />
@@ -58,7 +59,9 @@
         <activity android:name=".MainLiberActivity" />
         <activity android:name=".RentSummaryActivity" />
         <activity android:name=".BookShelfItemExpandActivity" />
-        <receiver android:name=".helper.AlertReceiver"/>
+
+        <receiver android:name=".helper.AlertReceiver" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/api_key" /> <!-- <meta-data tools:replace="android:value"/> -->

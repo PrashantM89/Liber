@@ -260,13 +260,6 @@ public class RentSummaryActivity extends AppCompatActivity {
             public void onResponse(Call<ArrayList<UserReview>> call, Response<ArrayList<UserReview>> response) {
 
                 lst.clear();
-//                for(UserReview review:response.body()){
-//
-//                    if(review.getUbook().toLowerCase().contains(bookName.toLowerCase())){
-//                        ratingCount += Double.parseDouble(review.getUstar());
-//                        lst.add(review);
-//                    }
-//                }
                 double j=0.0;
                 for(int i=0;i<response.body().size();i++){
                     if(response.body().get(i).getUbook().toLowerCase().contains(bookName.toLowerCase())){
