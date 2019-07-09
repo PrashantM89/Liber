@@ -321,7 +321,7 @@
                 android:text="Paytm"
                 android:textStyle="bold"
                 android:textColor="@color/white"
-                android:enabled="false"
+                android:enabled="true"
                 android:textAllCaps="false"
                 android:background="@color/colorPrimary"/>
 

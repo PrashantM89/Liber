@@ -1,16 +1,20 @@
 package org.app.liber;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +26,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.paytm.pgsdk.PaytmMerchant;
+import com.paytm.pgsdk.PaytmOrder;
+import com.paytm.pgsdk.PaytmPGService;
+import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
+
 import org.app.liber.adapter.RecyclerViewAdapter;
 import org.app.liber.helper.AlertReceiver;
 import org.app.liber.helper.DatabaseHelper;
@@ -29,6 +38,8 @@ import org.app.liber.helper.DateUtil;
 import org.app.liber.model.Book;
 import org.app.liber.model.UserTransactionModel;
 import org.app.liber.pojo.BookshelfPojo;
+import org.app.liber.pojo.PaytmOrderPojo;
+import org.app.liber.pojo.PaytmPojo;
 import org.app.liber.pojo.TransactionPojo;
 import org.app.liber.pojo.WalletPojo;
 
@@ -40,9 +51,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -57,8 +71,6 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private Button codBtn;
     private Button paytmBtn;
     private ProgressDialog progressDialog;
-    //private static final int TEZ_REQUEST_CODE = 123;
-    //private static final String GOOGLE_TEZ_PACKAGE_NAME = "com.google.android.apps.nbu.paisa.user";
     private Intent j;
     private DatabaseHelper databaseHelper;
     private BookshelfPojo l;
@@ -83,7 +95,9 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private double gstAmount = 0.0;
     private LiberEndpointInterface service;
     private int totalWalletAmount = 0;
-
+    private PaytmOrder paytmOrder;
+    private HashMap<String, String> paramMap;
+    private PaytmPGService paytmService;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,7 +113,6 @@ public class SelectPaymentActivity extends AppCompatActivity {
         });
         service = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class);
         pref = PreferenceManager.getDefaultSharedPreferences(this);
-    //    databaseHelper = new DatabaseHelper(getApplicationContext());
         linearLayout = (LinearLayout)findViewById(R.id.linearLayForSnackBar);
         orderTitle = (TextView)findViewById(R.id.os_title_id);
         codBtn = (Button)findViewById(R.id.cod_bttn_id);
@@ -113,18 +126,19 @@ public class SelectPaymentActivity extends AppCompatActivity {
         dateExtFeesTxt = (TextView)findViewById(R.id.date_ext_fees_id);
         gstTxt = (TextView)findViewById(R.id.gst_amount_id);
 
+
         userLocation = pref.getString("USER_CITY","unknown");
         getWalletAmountFromServer();
 
-        if(userLocation.equals("unknown") || userLocation == null){
-            codBtn.setEnabled(false);
-            gpayBtn.setEnabled(false);
-            paytmBtn.setEnabled(false);
-        }else{
-            codBtn.setEnabled(true);
-            gpayBtn.setEnabled(true);
-            paytmBtn.setEnabled(true);
-        }
+//        if(userLocation.equals("unknown") || userLocation == null){
+//            codBtn.setEnabled(false);
+//            gpayBtn.setEnabled(false);
+//            paytmBtn.setEnabled(false);
+//        }else{
+//            codBtn.setEnabled(true);
+//            gpayBtn.setEnabled(true);
+//            paytmBtn.setEnabled(true);
+//        }
 
         today = new Date();
         calendar = Calendar.getInstance();
@@ -198,6 +212,108 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     startActivity(j);
             }
         });
+
+
+        paytmBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Date c = Calendar.getInstance().getTime();
+                String orderId = String.valueOf(c.getTime());
+                paytmService = PaytmPGService.getStagingService();
+                paramMap = new HashMap<String,String>();
+                paramMap.put( "MID" , "ZaOkaN15773078382332");
+                paramMap.put( "ORDER_ID" , orderId);
+                paramMap.put( "CUST_ID" , pref.getString("USER_NAME","unknown").replaceAll("\\s+",""));
+                paramMap.put( "CHANNEL_ID" , "WAP");
+                paramMap.put( "TXN_AMOUNT" , "1.00");
+                paramMap.put( "WEBSITE" , "APPSTAGING");
+                paramMap.put( "INDUSTRY_TYPE_ID" , "Retail");
+                paramMap.put( "CALLBACK_URL", "https://securegw.paytm.in/theia/paytmCallback?ORDER_ID="+orderId);
+
+                PaytmOrderPojo paytmOrderPojo = new PaytmOrderPojo();
+                paytmOrderPojo.setCallback(paramMap.get("CALLBACK_URL"));
+                paytmOrderPojo.setChannelID(paramMap.get("CHANNEL_ID"));
+                paytmOrderPojo.setMid(paramMap.get("MID"));
+                paytmOrderPojo.setOrderID(paramMap.get("ORDER_ID"));
+                paytmOrderPojo.setTxnAMOUNT(paramMap.get("TXN_AMOUNT"));
+                paytmOrderPojo.setIndustryTYPEID(paramMap.get("INDUSTRY_TYPE_ID"));
+                paytmOrderPojo.setWebsite(paramMap.get("WEBSITE"));
+                paytmOrderPojo.setCustID(paramMap.get("CUST_ID"));
+                paytmOrderPojo.setMobileNO(paramMap.get("MOBILE_NO"));
+                paytmOrderPojo.setEmail(paramMap.get("EMAIL"));
+
+                Call<PaytmOrderPojo> call = service.getOrderChecksum(paramMap.get("ORDER_ID"),paramMap.get("CUST_ID"),paramMap.get("TXN_AMOUNT"));
+                call.enqueue(new Callback<PaytmOrderPojo>() {
+
+                    @Override
+                    public void onResponse(Call<PaytmOrderPojo> call, Response<PaytmOrderPojo> response) {
+
+                            if(response.body().getChecksum().equals(null) || response.body().getChecksum().equals("")){
+                                Toast.makeText(getApplicationContext(), "Checksum is null " , Toast.LENGTH_LONG).show();
+                            }else{
+                                paramMap.put( "CHECKSUMHASH" , response.body().getChecksum());
+                                paytmOrder = new PaytmOrder(paramMap);
+
+                                paytmService.initialize(paytmOrder,null);
+
+                                paytmService.startPaymentTransaction(SelectPaymentActivity.this, true, true, new PaytmPaymentTransactionCallback() {
+                                    /*Call Backs*/
+                                    public void someUIErrorOccurred(String inErrorMessage) {
+                                        Toast.makeText(getApplicationContext(), "Payment UIError response " + inErrorMessage, Toast.LENGTH_LONG).show();
+                                    }
+                                    public void onTransactionResponse(Bundle inResponse) {
+                                        if(inResponse.getString("STATUS").equals("TXN_SUCCESS")){
+                                            j = new Intent(getApplicationContext(), OrderCompleteActivity.class);
+                                            j.putExtra("tx_mode","Paytm");
+                                            Date c = Calendar.getInstance().getTime();
+
+                                            TransactionPojo usrTx = new TransactionPojo();
+                                            usrTx.setTxId(String.valueOf(c.getTime()));
+                                            usrTx.setTxPaymentMode("PAYTM");
+                                            usrTx.setTxDate(DateUtil.getDate(today));
+                                            usrTx.setTxDeliverySts("Pending");
+                                            usrTx.setTxAmount(totalAmntTxt.getText().toString());
+                                            usrTx.setTxDelete("N");
+                                            usrTx.setTxMob(pref.getString("USER_MOB","unknown"));
+                                            usrTx.setTxDeliveryDate(DateUtil.getDate(tomorrow));
+                                            usrTx.setTxType("Renter");
+                                            usrTx.setTxUser(pref.getString("USER_NAME","unknown"));
+                                            usrTx.setTxReturnDate(returnDateTxt.getText().toString());
+                                            usrTx.setTxBook(orderTitle.getText().toString());
+                                            usrTx.setTxBookOwner(l.getU_id());
+                                            usrTx.setTxBookOwnerMob(l.getMobile());
+                                            saveTxn(usrTx);
+                                            addMoneyToLenderWallet(usrTx);
+                                            setNotificationAlarm(usrTx);
+                                            startActivity(j);
+                                        }
+                                    }
+                                    public void networkNotAvailable() {
+                                        Toast.makeText(getApplicationContext(), "Network connection error: Check your internet connectivity", Toast.LENGTH_LONG).show();
+                                    }
+                                    public void clientAuthenticationFailed(String inErrorMessage) {
+                                        Toast.makeText(getApplicationContext(), "Authentication failed: Server error" + inErrorMessage.toString(), Toast.LENGTH_LONG).show();
+                                    }
+                                    public void onErrorLoadingWebPage(int iniErrorCode, String inErrorMessage, String inFailingUrl) {
+                                        Toast.makeText(getApplicationContext(), "Error loading web page:" + inErrorMessage.toString(), Toast.LENGTH_LONG).show();
+                                    }
+                                    public void onBackPressedCancelTransaction() {}
+                                    public void onTransactionCancel(String inErrorMessage, Bundle inResponse) {
+                                        Toast.makeText(getApplicationContext(), "TXN Canceled" + inErrorMessage.toString(), Toast.LENGTH_LONG).show();
+                                    }
+                                });
+                            }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PaytmOrderPojo> call, Throwable t) {
+                        Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }
+        });
+
 
         gpayBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,6 +1,8 @@
 package org.app.liber;
 
 import org.app.liber.pojo.BookshelfPojo;
+import org.app.liber.pojo.PaytmOrderPojo;
+import org.app.liber.pojo.PaytmPojo;
 import org.app.liber.pojo.TransactionPojo;
 import org.app.liber.pojo.UserPojo;
 import org.app.liber.pojo.UserReview;
@@ -63,4 +65,8 @@ public interface LiberEndpointInterface {
 
     @GET("user/user/{umob}")
     Call<UserPojo> getUserDetails(@Path("umob") String umob);
+
+    //Paytm
+    @GET("paytm/generateChecksum")
+    Call<PaytmOrderPojo> getOrderChecksum(@Query("order_ID")String order_ID,@Query("cust_ID")String cust_ID,@Query("txn_AMOUNT")String txn_AMOUNT);
 }
