@@ -27,13 +27,14 @@ public class WebActivity extends AppCompatActivity {
         toolbarTitle = (TextView)findViewById(R.id.common_toolbar_title_id);
         toolbarTitle.setText("Help");
 
+
         myWebView = (WebView) findViewById(R.id.webView);
-        myWebView.getSettings().setLoadWithOverviewMode(true);
-        myWebView.getSettings().setUseWideViewPort(true);
-        myWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+//        myWebView.getSettings().setLoadWithOverviewMode(true);
+//        myWebView.getSettings().setUseWideViewPort(true);
+//        myWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         myWebView.getSettings().setJavaScriptEnabled(true);
         myWebView.setWebViewClient(new WebViewClient());
-        myWebView.getSettings().setDomStorageEnabled(true);
+//        myWebView.getSettings().setDomStorageEnabled(true);
         myWebView.loadUrl(BASE_URL+"help.html");
 
     }

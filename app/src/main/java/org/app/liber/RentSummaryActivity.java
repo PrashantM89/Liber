@@ -241,39 +241,37 @@ public class RentSummaryActivity extends AppCompatActivity {
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadReviews(rentBookTitle.getText().toString());
-
-    }
 
     private void loadReviews(final String bookName){
-    //    db = new DatabaseHelper(getApplicationContext());
+
         lst = new ArrayList<UserReview>();
         UserReview userReview;
-//        Cursor result = db.getReview();
 
         Call<ArrayList<UserReview>> call = service.getUserReviews();
         call.enqueue(new Callback<ArrayList<UserReview>>() {
             @Override
             public void onResponse(Call<ArrayList<UserReview>> call, Response<ArrayList<UserReview>> response) {
-
                 lst.clear();
-                double j=0.0;
-                for(int i=0;i<response.body().size();i++){
+
+                for(int i=0,j=0;i<response.body().size();i++,j++){
                     if(response.body().get(i).getUbook().toLowerCase().contains(bookName.toLowerCase())){
                         ratingCount += Double.parseDouble(response.body().get(i).getUstar());
                         lst.add(response.body().get(i));
-                        j=j+1;
                     }
                 }
 
+
+                double result = ratingCount/lst.size();
+
                 if(l.getRating().equals("") || l.getRating().equals(null)){
-                    double result = ratingCount/j;
-                    rentBookRating.setText(String.format("%.1f",result/j));
+                    if(Double.isNaN(result)){
+                        rentBookRating.setText("0");
+                    }else {
+                        rentBookRating.setText(String.format("%.1f", result));
+                    }
                 }else{
                     rentBookRating.setText(l.getRating());
+                    System.out.println("-------- result from app: "+l.getRating());
                 }
                 readerReviewAdapter = new ReaderReviewAdapter(getApplicationContext(),lst);
                 GridLayoutManager glm = new GridLayoutManager(getApplicationContext(),1);

@@ -1,22 +1,16 @@
 package org.app.liber;
 
-import android.Manifest;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
@@ -25,39 +19,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.paytm.pgsdk.PaytmMerchant;
 import com.paytm.pgsdk.PaytmOrder;
 import com.paytm.pgsdk.PaytmPGService;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
-
-import org.app.liber.adapter.RecyclerViewAdapter;
 import org.app.liber.helper.AlertReceiver;
 import org.app.liber.helper.DatabaseHelper;
 import org.app.liber.helper.DateUtil;
-import org.app.liber.model.Book;
-import org.app.liber.model.UserTransactionModel;
 import org.app.liber.pojo.BookshelfPojo;
 import org.app.liber.pojo.PaytmOrderPojo;
-import org.app.liber.pojo.PaytmPojo;
 import org.app.liber.pojo.TransactionPojo;
 import org.app.liber.pojo.WalletPojo;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -72,7 +53,6 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private Button paytmBtn;
     private ProgressDialog progressDialog;
     private Intent j;
-    private DatabaseHelper databaseHelper;
     private BookshelfPojo l;
     private CheckBox walletChckBox;
     private TextView totalAmntTxt;
@@ -98,6 +78,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
     private PaytmOrder paytmOrder;
     private HashMap<String, String> paramMap;
     private PaytmPGService paytmService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -126,6 +107,10 @@ public class SelectPaymentActivity extends AppCompatActivity {
         dateExtFeesTxt = (TextView)findViewById(R.id.date_ext_fees_id);
         gstTxt = (TextView)findViewById(R.id.gst_amount_id);
 
+        progressDialog = new ProgressDialog(SelectPaymentActivity.this);
+        progressDialog.setMessage(getApplicationContext().getString(R.string.processing_txn_label));
+        progressDialog.setCancelable(false);
+        progressDialog.setIndeterminate(true);
 
         userLocation = pref.getString("USER_CITY","unknown");
         getWalletAmountFromServer();
@@ -186,7 +171,6 @@ public class SelectPaymentActivity extends AppCompatActivity {
         codBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                     j = new Intent(getApplicationContext(), OrderCompleteActivity.class);
                     j.putExtra("tx_mode","Cash");
                     Date c = Calendar.getInstance().getTime();
@@ -217,6 +201,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         paytmBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.show();
                 Date c = Calendar.getInstance().getTime();
                 String orderId = String.valueOf(c.getTime());
                 paytmService = PaytmPGService.getStagingService();
@@ -262,6 +247,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                                         Toast.makeText(getApplicationContext(), "Payment UIError response " + inErrorMessage, Toast.LENGTH_LONG).show();
                                     }
                                     public void onTransactionResponse(Bundle inResponse) {
+                                      progressDialog.dismiss();
                                         if(inResponse.getString("STATUS").equals("TXN_SUCCESS")){
                                             j = new Intent(getApplicationContext(), OrderCompleteActivity.class);
                                             j.putExtra("tx_mode","Paytm");
@@ -289,16 +275,22 @@ public class SelectPaymentActivity extends AppCompatActivity {
                                         }
                                     }
                                     public void networkNotAvailable() {
+                                        progressDialog.dismiss();
                                         Toast.makeText(getApplicationContext(), "Network connection error: Check your internet connectivity", Toast.LENGTH_LONG).show();
                                     }
                                     public void clientAuthenticationFailed(String inErrorMessage) {
+                                        progressDialog.dismiss();
                                         Toast.makeText(getApplicationContext(), "Authentication failed: Server error" + inErrorMessage.toString(), Toast.LENGTH_LONG).show();
                                     }
                                     public void onErrorLoadingWebPage(int iniErrorCode, String inErrorMessage, String inFailingUrl) {
+                                        progressDialog.dismiss();
                                         Toast.makeText(getApplicationContext(), "Error loading web page:" + inErrorMessage.toString(), Toast.LENGTH_LONG).show();
                                     }
-                                    public void onBackPressedCancelTransaction() {}
+                                    public void onBackPressedCancelTransaction() {
+                                        progressDialog.dismiss();
+                                    }
                                     public void onTransactionCancel(String inErrorMessage, Bundle inResponse) {
+                                        progressDialog.dismiss();
                                         Toast.makeText(getApplicationContext(), "TXN Canceled" + inErrorMessage.toString(), Toast.LENGTH_LONG).show();
                                     }
                                 });
@@ -307,6 +299,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
 
                     @Override
                     public void onFailure(Call<PaytmOrderPojo> call, Throwable t) {
+                        progressDialog.dismiss();
                         Toast.makeText(getApplicationContext(),t.getMessage(),Toast.LENGTH_LONG).show();
                     }
                 });
@@ -318,6 +311,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
         gpayBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                progressDialog.show();
                 Uri uri = Uri.parse("upi://pay").buildUpon()
                         .appendQueryParameter("pa","prashantm61289-1@okaxis")
                         .appendQueryParameter("pn","Prashant Mishra")
@@ -401,17 +395,12 @@ public class SelectPaymentActivity extends AppCompatActivity {
     }
 
     private void saveTxn(TransactionPojo transactionPojo){
-        progressDialog = new ProgressDialog(getApplicationContext());
-        progressDialog.setMessage(getApplicationContext().getString(R.string.processing_txn_label));
-        progressDialog.setCancelable(false);
-        progressDialog.setIndeterminate(true);
 
         Call<ResponseBody> call = LiberApiBase.getRetrofitInstance().create(LiberEndpointInterface.class).insertUserTxn(transactionPojo);
 
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                progressDialog.dismiss();
                 Toast.makeText(getApplicationContext(),"Transaction Saved",Toast.LENGTH_SHORT).show();
             }
 
@@ -470,6 +459,7 @@ public class SelectPaymentActivity extends AppCompatActivity {
                     saveTxn(usrTx);
                     setNotificationAlarm(usrTx);
                     addMoneyToLenderWallet(usrTx);
+                    progressDialog.dismiss();
                     startActivity(j);
                 }
             }

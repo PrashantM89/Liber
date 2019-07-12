@@ -17,6 +17,7 @@
         android:visibility="visible"
         android:textColor="@android:color/white"
         android:textStyle="bold"
+        android:drawableLeft="@drawable/ic_backspace"
         android:textSize="@dimen/text_sz_large"
         android:fontFamily="sans-serif-light" />
 

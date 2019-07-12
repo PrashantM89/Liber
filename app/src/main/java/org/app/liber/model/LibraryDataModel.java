@@ -8,10 +8,10 @@ public class LibraryDataModel implements Serializable {
 
     private String bookTitle;
     private String author;
-    String smallThumbnailLink;
-    String description;
-    String genre;
-    String avgRating = "";
+    private String smallThumbnailLink;
+    private String description;
+    private String genre;
+    private String avgRating = "";
 
     public LibraryDataModel(String bookTitle, String author, String smallThumbnailLink, String description,String genre, @Nullable String avgRating) {
         this.bookTitle = bookTitle;
